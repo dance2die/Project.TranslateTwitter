@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
@@ -9,56 +8,6 @@ using System.Xml;
 
 namespace Project.TranslateTwitter.Translator.Mstf.Demo
 {
-	public class LanguageDetector
-	{
-		public IAuthenticationContext AuthenticationContext { get; set; }
-
-		public LanguageDetector(IAuthenticationContext authenticationContext)
-		{
-			AuthenticationContext = authenticationContext;
-		}
-
-		public string DetectMethod(string textToDetect)
-		{
-			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
-			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
-			AdmAuthentication admAuth = new AdmAuthentication(AuthenticationContext.ClientId, AuthenticationContext.ClientSecret);
-
-			var admToken = admAuth.GetAccessToken();
-			// Create a header with the access_token property of the returned token
-			var authToken = "Bearer " + admToken.access_token;
-
-
-			//Keep appId parameter blank as we are sending access token in authorization header.
-			string uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect?text=" + textToDetect;
-			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.Headers.Add("Authorization", authToken);
-			WebResponse response = null;
-			try
-			{
-				response = httpWebRequest.GetResponse();
-				using (Stream stream = response.GetResponseStream())
-				{
-					DataContractSerializer dcs = new DataContractSerializer(Type.GetType("System.String"));
-					string languageDetected = (string)dcs.ReadObject(stream);
-					//Console.WriteLine("Language detected:{0}", languageDetected);
-					//Console.WriteLine("Press any key to continue...");
-					//Console.ReadKey(true);
-					return languageDetected;
-				}
-			}
-			finally
-			{
-				if (response != null)
-				{
-					response.Close();
-					response = null;
-				}
-			}
-		}
-
-	}
-
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -86,6 +35,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				var detectedLanguage = detector.DetectMethod(textToDetect);
 
 				Console.WriteLine("Language Detected: {0}", detectedLanguage);
+				Console.WriteLine("Press any key to continue...");
+				Console.ReadKey(true);
 			}
 			catch (WebException e)
 			{
@@ -100,7 +51,6 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				Console.ReadKey(true);
 			}
 		}
-
 
 		private static void ProcessWebException(WebException e)
 		{

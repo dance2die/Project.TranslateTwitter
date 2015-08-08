@@ -50,6 +50,7 @@
     <Compile Include="AdmAuthentication.cs" />
     <Compile Include="AuthenticationContext.cs" />
     <Compile Include="IAuthenticationContext.cs" />
+    <Compile Include="LanguageDetector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
