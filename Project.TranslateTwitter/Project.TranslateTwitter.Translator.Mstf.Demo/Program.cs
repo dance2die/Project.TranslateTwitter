@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
-using System.Xml.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Web;
+using System.Xml;
 
 namespace Project.TranslateTwitter.Translator.Mstf.Demo
 {
@@ -95,7 +92,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			{
 				using (Stream responseStream = response.GetResponseStream())
 				{
-					using (StreamReader sr = new StreamReader(responseStream, System.Text.Encoding.ASCII))
+					using (StreamReader sr = new StreamReader(responseStream, Encoding.ASCII))
 					{
 						strResponse = sr.ReadToEnd();
 					}
@@ -146,7 +143,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var stream = response.GetResponseStream();
 			var encode = Encoding.GetEncoding("utf-8");
 			var translatedStream = new StreamReader(stream, encode);
-			System.Xml.XmlDocument xTranslation = new System.Xml.XmlDocument();
+			XmlDocument xTranslation = new XmlDocument();
 			xTranslation.LoadXml(translatedStream.ReadToEnd());
 
 			Console.WriteLine("Your Translation is: " + xTranslation.InnerText);
