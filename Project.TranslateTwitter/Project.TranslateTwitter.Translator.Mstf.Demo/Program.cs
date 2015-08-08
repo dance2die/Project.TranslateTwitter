@@ -18,21 +18,74 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			AuthenticationContext = authenticationContext;
 		}
 
-		/// <remarks>
-		/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
-		/// </remarks>
-		public void TestLanguageDetection()
+		public string DetectMethod(string textToDetect)
 		{
 			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
 			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
 			AdmAuthentication admAuth = new AdmAuthentication(AuthenticationContext.ClientId, AuthenticationContext.ClientSecret);
 
+			var admToken = admAuth.GetAccessToken();
+			// Create a header with the access_token property of the returned token
+			var authToken = "Bearer " + admToken.access_token;
+
+
+			//Keep appId parameter blank as we are sending access token in authorization header.
+			string uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect?text=" + textToDetect;
+			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
+			httpWebRequest.Headers.Add("Authorization", authToken);
+			WebResponse response = null;
 			try
 			{
-				var admToken = admAuth.GetAccessToken();
-				// Create a header with the access_token property of the returned token
-				var headerValue = "Bearer " + admToken.access_token;
-				DetectMethod(headerValue);
+				response = httpWebRequest.GetResponse();
+				using (Stream stream = response.GetResponseStream())
+				{
+					DataContractSerializer dcs = new DataContractSerializer(Type.GetType("System.String"));
+					string languageDetected = (string)dcs.ReadObject(stream);
+					//Console.WriteLine("Language detected:{0}", languageDetected);
+					//Console.WriteLine("Press any key to continue...");
+					//Console.ReadKey(true);
+					return languageDetected;
+				}
+			}
+			finally
+			{
+				if (response != null)
+				{
+					response.Close();
+					response = null;
+				}
+			}
+		}
+
+	}
+
+	public class Program
+	{
+		public static void Main(string[] args)
+		{
+			string clientId = "Project_TranslateTwitter";
+			string clientSecret = Environment.GetEnvironmentVariable(
+				"Project_TranslateTwitter.ClientSecret", EnvironmentVariableTarget.User);
+
+			//TestTranslating(clientId, clientSecret);
+			TestLanguageDetection(clientId, clientSecret);
+		}
+
+		/// <remarks>
+		/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
+		/// </remarks>
+		private static void TestLanguageDetection(string clientId, string clientSecret)
+		{
+			try
+			{
+				Console.WriteLine("Enter Text to detect language:");
+				string textToDetect = Console.ReadLine();
+				//textToDetect = "会場限定";
+
+				var detector = new LanguageDetector(new AuthenticationContext(clientId, clientSecret));
+				var detectedLanguage = detector.DetectMethod(textToDetect);
+
+				Console.WriteLine("Language Detected: {0}", detectedLanguage);
 			}
 			catch (WebException e)
 			{
@@ -48,39 +101,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			}
 		}
 
-		private void DetectMethod(string authToken)
-		{
-			Console.WriteLine("Enter Text to detect language:");
-			string textToDetect = Console.ReadLine();
-			//textToDetect = "会場限定";
-			//Keep appId parameter blank as we are sending access token in authorization header.
-			string uri = "http://api.microsofttranslator.com/v2/Http.svc/Detect?text=" + textToDetect;
-			HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
-			httpWebRequest.Headers.Add("Authorization", authToken);
-			WebResponse response = null;
-			try
-			{
-				response = httpWebRequest.GetResponse();
-				using (Stream stream = response.GetResponseStream())
-				{
-					DataContractSerializer dcs = new DataContractSerializer(Type.GetType("System.String"));
-					string languageDetected = (string)dcs.ReadObject(stream);
-					Console.WriteLine("Language detected:{0}", languageDetected);
-					Console.WriteLine("Press any key to continue...");
-					Console.ReadKey(true);
-				}
-			}
-			finally
-			{
-				if (response != null)
-				{
-					response.Close();
-					response = null;
-				}
-			}
-		}
 
-		private void ProcessWebException(WebException e)
+		private static void ProcessWebException(WebException e)
 		{
 			Console.WriteLine("{0}", e.ToString());
 			// Obtain detailed error information
@@ -96,21 +118,6 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				}
 			}
 			Console.WriteLine("Http status code={0}, error message={1}", e.Status, strResponse);
-		}
-	}
-
-	public class Program
-	{
-		public static void Main(string[] args)
-		{
-			string clientId = "Project_TranslateTwitter";
-			string clientSecret = Environment.GetEnvironmentVariable(
-				"Project_TranslateTwitter.ClientSecret", EnvironmentVariableTarget.User);
-
-			//TestTranslating(clientId, clientSecret);
-
-			new LanguageDetector(new AuthenticationContext(clientId, clientSecret)).TestLanguageDetection();
-            //TestLanguageDetection();
 		}
 
 		/// <remarks>
