@@ -1,23 +1,26 @@
 ﻿using System.IO;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Xml;
 
 namespace Project.TranslateTwitter.Translator.Microsoft
 {
-	public class LanguageTranslator
+	public class LanguageTranslator : LanguageParent
 	{
-		public IAuthenticationContext AuthenticationContext { get; set; }
+		private LanguageTranslatorArg Arg { get; set; }
 
-		public LanguageTranslator(IAuthenticationContext authenticationContext)
+		protected override string MethodName => "Translate";
+
+		public LanguageTranslator(IAuthenticationContext authenticationContext) 
+			: base(authenticationContext)
 		{
-			AuthenticationContext = authenticationContext;
 		}
 
-		public string Translate(TranslationArg arg)
+		public string Translate(LanguageTranslatorArg arg)
 		{
-			using (WebResponse response = CreateRequest(arg).GetResponse())
+			Arg = arg;
+
+			using (WebResponse response = CreateRequest().GetResponse())
 			using (Stream stream = response.GetResponseStream())
 			{
 				var encode = Encoding.GetEncoding("utf-8");
@@ -30,43 +33,9 @@ namespace Project.TranslateTwitter.Translator.Microsoft
 			}
 		}
 
-		private HttpWebRequest CreateRequest(TranslationArg arg)
+		protected override string GetQueryString()
 		{
-			string uri = string.Format(
-				"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from={1}&to={2}",
-				HttpUtility.UrlEncode(arg.TextToTranslate),
-				arg.FromLanguage, arg.ToLanguage);
-			var result = (HttpWebRequest)WebRequest.Create(uri);
-			result.Headers.Add("Authorization", GetAuthorizationToken());
-			return result;
-		}
-
-		private string GetAuthorizationToken()
-		{
-			return $"Bearer {GetAccessToken().access_token}";
-		}
-
-		private MstfAzureMarketplaceAccessToken GetAccessToken()
-		{
-			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
-			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
-			MstfAzureMarketplaceAuthentication mstfAzureMarketplaceAuth = new MstfAzureMarketplaceAuthentication(
-				AuthenticationContext.ClientId, AuthenticationContext.ClientSecret);
-			return mstfAzureMarketplaceAuth.GetAccessToken();
-		}
-	}
-
-	public class TranslationArg
-	{
-		public string TextToTranslate { get; set; }
-		public string FromLanguage { get; set; }
-		public string ToLanguage { get; set; }
-
-		public TranslationArg(string textToTranslate, string fromLanguage, string toLanguage = "en")
-		{
-			TextToTranslate = textToTranslate;
-			FromLanguage = fromLanguage;
-			ToLanguage = toLanguage;
+			return $"?text={Arg.TextToTranslate}&from={Arg.FromLanguage}&to={Arg.ToLanguage}";
 		}
 	}
 }

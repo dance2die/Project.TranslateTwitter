@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.Design;
-using System.Net;
+﻿using System.Net;
 
 namespace Project.TranslateTwitter.Translator.Microsoft
 {

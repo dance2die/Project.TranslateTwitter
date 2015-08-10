@@ -82,7 +82,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var detectedLanguage = detector.DetectMethod(txtToTranslate);
 
 			var translator = new LanguageTranslator(authenticationContext);
-			var translatedText = translator.Translate(new TranslationArg(txtToTranslate, detectedLanguage));
+			var translatedText = translator.Translate(new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
 
 			Console.WriteLine("Your Translation is: " + translatedText);
 			Console.WriteLine("Press any key to continue...");

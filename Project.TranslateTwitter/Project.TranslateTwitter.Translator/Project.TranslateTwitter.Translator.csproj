@@ -50,6 +50,7 @@
     <Compile Include="Microsoft\LanguageTranslator.cs" />
     <Compile Include="Microsoft\MstfAzureMarketplaceAccessToken.cs" />
     <Compile Include="Microsoft\MstfAzureMarketplaceAuthentication.cs" />
+    <Compile Include="Microsoft\LanguageTranslatorArg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
