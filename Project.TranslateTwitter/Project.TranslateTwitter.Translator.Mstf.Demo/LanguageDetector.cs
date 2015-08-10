@@ -39,7 +39,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			return $"Bearer {GetAccessToken().access_token}";
 		}
 
-		private AdmAccessToken GetAccessToken()
+		private MstfAzureMarketplaceAccessToken GetAccessToken()
 		{
 			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
 			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 

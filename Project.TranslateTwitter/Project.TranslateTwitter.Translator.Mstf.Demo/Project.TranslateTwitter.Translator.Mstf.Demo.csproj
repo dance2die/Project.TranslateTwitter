@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdmAccessToken.cs" />
+    <Compile Include="MstfAzureMarketplaceAccessToken.cs" />
     <Compile Include="MstfAzureMarketplaceAuthentication.cs" />
     <Compile Include="AuthenticationContext.cs" />
     <Compile Include="IAuthenticationContext.cs" />

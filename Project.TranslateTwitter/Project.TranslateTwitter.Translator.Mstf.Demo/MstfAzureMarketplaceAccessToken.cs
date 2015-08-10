@@ -1,6 +1,6 @@
 namespace Project.TranslateTwitter.Translator.Mstf.Demo
 {
-	public class AdmAccessToken
+	public class MstfAzureMarketplaceAccessToken
 	{
 		public string access_token { get; set; }
 		public string token_type { get; set; }

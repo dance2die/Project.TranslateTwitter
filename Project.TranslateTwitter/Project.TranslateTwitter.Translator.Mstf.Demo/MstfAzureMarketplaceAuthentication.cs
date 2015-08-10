@@ -19,7 +19,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		private const string CONTENT_TYPE = "application/x-www-form-urlencoded";
 
 		private readonly string _request;
-		private AdmAccessToken _token;
+		private MstfAzureMarketplaceAccessToken _token;
 		private readonly Timer _accessTokenRenewer;
 
 		public string ClientId { get; }
@@ -41,7 +41,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				TimeSpan.FromMinutes(REFRESH_TOKEN_DURATION), TimeSpan.FromMilliseconds(-1));
 		}
 
-		public AdmAccessToken GetAccessToken()
+		public MstfAzureMarketplaceAccessToken GetAccessToken()
 		{
 			return _token;
 		}
@@ -71,20 +71,20 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 
 		private void RenewAccessToken()
 		{
-			AdmAccessToken newAccessToken = HttpPost(DATAMARKET_ACCESS_URI, _request);
+			MstfAzureMarketplaceAccessToken newAccessToken = HttpPost(DATAMARKET_ACCESS_URI, _request);
 			//swap the new token with old one
 			//Note: the swap is thread unsafe
 			_token = newAccessToken;
 		}
 
-		private AdmAccessToken HttpPost(string datamarketAccessUri, string requestDetails)
+		private MstfAzureMarketplaceAccessToken HttpPost(string datamarketAccessUri, string requestDetails)
 		{
 			var webRequest = Request(datamarketAccessUri, requestDetails);
 			using (WebResponse webResponse = webRequest.GetResponse())
 			{
-				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(AdmAccessToken));
+				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(MstfAzureMarketplaceAccessToken));
 				//Get deserialized object from JSON stream
-				AdmAccessToken token = (AdmAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
+				MstfAzureMarketplaceAccessToken token = (MstfAzureMarketplaceAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
 				return token;
 			}
 		}

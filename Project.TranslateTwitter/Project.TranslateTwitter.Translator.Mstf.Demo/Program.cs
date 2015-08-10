@@ -91,12 +91,12 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				outputStream.Write(bytes, 0, bytes.Length);
 			}
 
-			AdmAccessToken token;
+			MstfAzureMarketplaceAccessToken token;
 			using (var webResponse = webRequest.GetResponse())
 			{
-				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(AdmAccessToken));
+				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(MstfAzureMarketplaceAccessToken));
 				//Get deserialized object from JSON stream 
-				token = (AdmAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
+				token = (MstfAzureMarketplaceAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
 			}
 
 			string headerValue = string.Format("Bearer {0}", token.access_token);
