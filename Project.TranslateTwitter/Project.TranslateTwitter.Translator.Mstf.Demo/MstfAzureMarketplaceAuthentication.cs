@@ -11,7 +11,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 	/// <remarks>
 	/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
 	/// </remarks>
-	public class AdmAuthentication
+	public class MstfAzureMarketplaceAuthentication
 	{
 		private const string DATAMARKET_ACCESS_URI = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
 		//Access token expires every 10 minutes. Renew it every 9 minutes only.
@@ -25,7 +25,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		public string ClientId { get; }
 		public string ClientSecret { get; }
 
-		public AdmAuthentication(string clientId, string clientSecret)
+		public MstfAzureMarketplaceAuthentication(string clientId, string clientSecret)
 		{
 			ClientId = clientId;
 			ClientSecret = clientSecret;

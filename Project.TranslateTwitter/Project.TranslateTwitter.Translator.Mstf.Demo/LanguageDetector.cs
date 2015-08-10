@@ -43,9 +43,9 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		{
 			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
 			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
-			AdmAuthentication admAuth = new AdmAuthentication(
+			MstfAzureMarketplaceAuthentication mstfAzureMarketplaceAuth = new MstfAzureMarketplaceAuthentication(
 				AuthenticationContext.ClientId, AuthenticationContext.ClientSecret);
-			return admAuth.GetAccessToken();
+			return mstfAzureMarketplaceAuth.GetAccessToken();
 		}
 	}
 }

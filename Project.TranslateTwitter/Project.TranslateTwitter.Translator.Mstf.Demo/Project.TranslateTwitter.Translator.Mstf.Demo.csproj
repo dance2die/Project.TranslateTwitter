@@ -47,7 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdmAccessToken.cs" />
-    <Compile Include="AdmAuthentication.cs" />
+    <Compile Include="MstfAzureMarketplaceAuthentication.cs" />
     <Compile Include="AuthenticationContext.cs" />
     <Compile Include="IAuthenticationContext.cs" />
     <Compile Include="LanguageDetector.cs" />
