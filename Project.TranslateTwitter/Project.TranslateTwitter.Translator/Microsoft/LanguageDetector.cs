@@ -21,7 +21,7 @@ namespace Project.TranslateTwitter.Translator.Microsoft
 			return $"?text={_textToDetect}";
 		}
 
-		public string DetectMethod(string textToDetect)
+		public string Detect(string textToDetect)
 		{
 			_textToDetect = textToDetect;
 

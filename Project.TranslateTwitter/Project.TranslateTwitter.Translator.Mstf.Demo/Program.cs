@@ -29,8 +29,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				string textToDetect = Console.ReadLine();
 				//textToDetect = "会場限定";
 
-				var detector = new LanguageDetector(new AuthenticationContext(clientId, clientSecret));
-				var detectedLanguage = detector.DetectMethod(textToDetect);
+				var languageDetector = new LanguageDetector(new AuthenticationContext(clientId, clientSecret));
+				var detectedLanguage = languageDetector.Detect(textToDetect);
 
 				Console.WriteLine("Language Detected: {0}", detectedLanguage);
 				Console.WriteLine("Press any key to continue...");
@@ -80,8 +80,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			string txtToTranslate = "안녕 세상아";
 			txtToTranslate = Console.ReadLine();
 
-			var detector = new LanguageDetector(authenticationContext);
-			var detectedLanguage = detector.DetectMethod(txtToTranslate);
+			var languageDetector = new LanguageDetector(authenticationContext);
+			var detectedLanguage = languageDetector.Detect(txtToTranslate);
 
 			var translator = new LanguageTranslator(authenticationContext);
 			var translatedText = translator.Translate(new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
