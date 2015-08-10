@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 
-namespace Project.TranslateTwitter.Translator.Mstf.Demo
+namespace Project.TranslateTwitter.Translator.Microsoft
 {
 	public class LanguageDetector
 	{

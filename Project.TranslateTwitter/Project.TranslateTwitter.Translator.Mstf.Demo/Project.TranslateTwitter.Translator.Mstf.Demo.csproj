@@ -46,17 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LanguageTranslator.cs" />
-    <Compile Include="MstfAzureMarketplaceAccessToken.cs" />
-    <Compile Include="MstfAzureMarketplaceAuthentication.cs" />
-    <Compile Include="AuthenticationContext.cs" />
-    <Compile Include="IAuthenticationContext.cs" />
-    <Compile Include="LanguageDetector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Project.TranslateTwitter.Translator\Project.TranslateTwitter.Translator.csproj">
+      <Project>{1db9021a-b138-43fe-add6-c0f5b7eef694}</Project>
+      <Name>Project.TranslateTwitter.Translator</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,4 +1,4 @@
-namespace Project.TranslateTwitter.Translator.Mstf.Demo
+namespace Project.TranslateTwitter.Translator.Microsoft
 {
 	public class MstfAzureMarketplaceAccessToken
 	{

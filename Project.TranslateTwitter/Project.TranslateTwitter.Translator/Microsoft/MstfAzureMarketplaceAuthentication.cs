@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 
-namespace Project.TranslateTwitter.Translator.Mstf.Demo
+namespace Project.TranslateTwitter.Translator.Microsoft
 {
 	/// <remarks>
 	/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
