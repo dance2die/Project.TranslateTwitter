@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Web;
 using System.Xml;
@@ -81,24 +80,34 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
 			string txtToTranslate = "안녕 세상아";
-			string uri = string.Format(
-				"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en", 
-				HttpUtility.UrlEncode(txtToTranslate));
-			var translationWebRequest = WebRequest.Create(uri);
-			translationWebRequest.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
+			//string uri = string.Format(
+			//	"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en",
+			//	HttpUtility.UrlEncode(txtToTranslate));
+			//var translationWebRequest = WebRequest.Create(uri);
+			//translationWebRequest.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
 
-			Stream stream;
-			using (var response = translationWebRequest.GetResponse())
+			StreamReader translatedStream;
+			using (WebResponse response = CreateRequest(authenticationContext, txtToTranslate).GetResponse())
+			using (Stream stream = response.GetResponseStream())
 			{
-				stream = response.GetResponseStream();
+				var encode = Encoding.GetEncoding("utf-8");
+				translatedStream = new StreamReader(stream, encode);
+
+				XmlDocument xTranslation = new XmlDocument();
+				xTranslation.LoadXml(translatedStream.ReadToEnd());
+
+				Console.WriteLine("Your Translation is: " + xTranslation.InnerText);
 			}
+		}
 
-			var encode = Encoding.GetEncoding("utf-8");
-			var translatedStream = new StreamReader(stream, encode);
-			XmlDocument xTranslation = new XmlDocument();
-			xTranslation.LoadXml(translatedStream.ReadToEnd());
-
-			Console.WriteLine("Your Translation is: " + xTranslation.InnerText);
+		private static HttpWebRequest CreateRequest(AuthenticationContext authenticationContext, string txtToTranslate)
+		{
+			string uri = string.Format(
+				"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en",
+				HttpUtility.UrlEncode(txtToTranslate));
+			var result = (HttpWebRequest)WebRequest.Create(uri);
+			result.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
+			return result;
 		}
 
 		private static string GetAuthorizationToken(AuthenticationContext authenticationContext)
@@ -115,26 +124,26 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			return mstfAzureMarketplaceAuth.GetAccessToken();
 		}
 
-		private static HttpWebRequest GetWebRequest(AuthenticationContext authenticationContext)
-		{
-			string translatorAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
-			string requestDetails = string.Format(
-				"grant_type=client_credentials&client_id={0}&client_secret={1}&scope=http://api.microsofttranslator.com",
-				HttpUtility.UrlEncode(authenticationContext.ClientId), 
-				HttpUtility.UrlEncode(authenticationContext.ClientSecret));
+		//private static HttpWebRequest GetWebRequest(AuthenticationContext authenticationContext)
+		//{
+		//	string translatorAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
+		//	string requestDetails = string.Format(
+		//		"grant_type=client_credentials&client_id={0}&client_secret={1}&scope=http://api.microsofttranslator.com",
+		//		HttpUtility.UrlEncode(authenticationContext.ClientId),
+		//		HttpUtility.UrlEncode(authenticationContext.ClientSecret));
 
-			HttpWebRequest result = (HttpWebRequest)WebRequest.Create(translatorAccessUri);
-			result.ContentType = "application/x-www-form-urlencoded";
-			result.Method = "POST";
+		//	HttpWebRequest result = (HttpWebRequest)WebRequest.Create(translatorAccessUri);
+		//	result.ContentType = "application/x-www-form-urlencoded";
+		//	result.Method = "POST";
 
-			byte[] bytes = Encoding.ASCII.GetBytes(requestDetails);
-			result.ContentLength = bytes.Length;
-			using (Stream outputStream = result.GetRequestStream())
-			{
-				outputStream.Write(bytes, 0, bytes.Length);
-			}
+		//	byte[] bytes = Encoding.ASCII.GetBytes(requestDetails);
+		//	result.ContentLength = bytes.Length;
+		//	using (Stream outputStream = result.GetRequestStream())
+		//	{
+		//		outputStream.Write(bytes, 0, bytes.Length);
+		//	}
 
-			return result;
-		}
+		//	return result;
+		//}
 	}
 }
