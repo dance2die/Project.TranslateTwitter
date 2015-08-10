@@ -16,8 +16,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			string clientSecret = Environment.GetEnvironmentVariable(
 				"Project_TranslateTwitter.ClientSecret", EnvironmentVariableTarget.User);
 
-			//TestTranslating(clientId, clientSecret);
-			TestLanguageDetection(clientId, clientSecret);
+			TestTranslating(clientId, clientSecret);
+			//TestLanguageDetection(clientId, clientSecret);
 		}
 
 		/// <remarks>
@@ -70,52 +70,71 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			Console.WriteLine("Http status code={0}, error message={1}", e.Status, strResponse);
 		}
 
+
+
 		/// <remarks>
 		/// http://blogs.msdn.com/b/translation/p/gettingstarted2.aspx
 		/// </remarks>
 		private static void TestTranslating(string clientId, string clientSecret)
 		{
-			string translatorAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
-			string requestDetails = string.Format(
-				"grant_type=client_credentials&client_id={0}&client_secret={1}&scope=http://api.microsofttranslator.com",
-				HttpUtility.UrlEncode(clientId), HttpUtility.UrlEncode(clientSecret));
 
-			WebRequest webRequest = WebRequest.Create(translatorAccessUri);
-			webRequest.ContentType = "application/x-www-form-urlencoded";
-			webRequest.Method = "POST";
-
-			byte[] bytes = Encoding.ASCII.GetBytes(requestDetails);
-			webRequest.ContentLength = bytes.Length;
-			using (Stream outputStream = webRequest.GetRequestStream())
-			{
-				outputStream.Write(bytes, 0, bytes.Length);
-			}
-
-			MstfAzureMarketplaceAccessToken token;
-			using (var webResponse = webRequest.GetResponse())
-			{
-				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(MstfAzureMarketplaceAccessToken));
-				//Get deserialized object from JSON stream 
-				token = (MstfAzureMarketplaceAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
-			}
-
-			string headerValue = string.Format("Bearer {0}", token.access_token);
-
+			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
 			string txtToTranslate = "안녕 세상아";
 			string uri = string.Format(
 				"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en", 
 				HttpUtility.UrlEncode(txtToTranslate));
 			var translationWebRequest = WebRequest.Create(uri);
-			translationWebRequest.Headers.Add("Authorization", headerValue);
-			var response = translationWebRequest.GetResponse();
-			var stream = response.GetResponseStream();
+			translationWebRequest.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
+
+			Stream stream;
+			using (var response = translationWebRequest.GetResponse())
+			{
+				stream = response.GetResponseStream();
+			}
+
 			var encode = Encoding.GetEncoding("utf-8");
 			var translatedStream = new StreamReader(stream, encode);
 			XmlDocument xTranslation = new XmlDocument();
 			xTranslation.LoadXml(translatedStream.ReadToEnd());
 
 			Console.WriteLine("Your Translation is: " + xTranslation.InnerText);
+		}
+
+		private static string GetAuthorizationToken(AuthenticationContext authenticationContext)
+		{
+			return $"Bearer {GetAccessToken(authenticationContext).access_token}";
+		}
+
+		private static MstfAzureMarketplaceAccessToken GetAccessToken(AuthenticationContext authenticationContext)
+		{
+			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
+			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
+			MstfAzureMarketplaceAuthentication mstfAzureMarketplaceAuth = new MstfAzureMarketplaceAuthentication(
+				authenticationContext.ClientId, authenticationContext.ClientSecret);
+			return mstfAzureMarketplaceAuth.GetAccessToken();
+		}
+
+		private static HttpWebRequest GetWebRequest(AuthenticationContext authenticationContext)
+		{
+			string translatorAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
+			string requestDetails = string.Format(
+				"grant_type=client_credentials&client_id={0}&client_secret={1}&scope=http://api.microsofttranslator.com",
+				HttpUtility.UrlEncode(authenticationContext.ClientId), 
+				HttpUtility.UrlEncode(authenticationContext.ClientSecret));
+
+			HttpWebRequest result = (HttpWebRequest)WebRequest.Create(translatorAccessUri);
+			result.ContentType = "application/x-www-form-urlencoded";
+			result.Method = "POST";
+
+			byte[] bytes = Encoding.ASCII.GetBytes(requestDetails);
+			result.ContentLength = bytes.Length;
+			using (Stream outputStream = result.GetRequestStream())
+			{
+				outputStream.Write(bytes, 0, bytes.Length);
+			}
+
+			return result;
 		}
 	}
 }
