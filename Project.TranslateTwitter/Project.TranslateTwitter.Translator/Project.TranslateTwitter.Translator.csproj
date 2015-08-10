@@ -46,6 +46,7 @@
     <Compile Include="Microsoft\AuthenticationContext.cs" />
     <Compile Include="Microsoft\IAuthenticationContext.cs" />
     <Compile Include="Microsoft\LanguageDetector.cs" />
+    <Compile Include="Microsoft\LanguageParent.cs" />
     <Compile Include="Microsoft\LanguageTranslator.cs" />
     <Compile Include="Microsoft\MstfAzureMarketplaceAccessToken.cs" />
     <Compile Include="Microsoft\MstfAzureMarketplaceAuthentication.cs" />

@@ -5,47 +5,33 @@ using System.Runtime.Serialization;
 
 namespace Project.TranslateTwitter.Translator.Microsoft
 {
-	public class LanguageDetector
+	public class LanguageDetector : LanguageParent
 	{
-		public IAuthenticationContext AuthenticationContext { get; set; }
+		private string _textToDetect;
 
-		public LanguageDetector(IAuthenticationContext authenticationContext)
+		protected override string MethodName => "Detect";
+
+		public LanguageDetector(IAuthenticationContext authenticationContext) 
+			: base(authenticationContext)
 		{
-			AuthenticationContext = authenticationContext;
+		}
+
+		protected override string GetQueryString()
+		{
+			return $"?text={_textToDetect}";
 		}
 
 		public string DetectMethod(string textToDetect)
 		{
-			using (WebResponse response = CreateRequest(textToDetect).GetResponse())
+			_textToDetect = textToDetect;
+
+			using (WebResponse response = CreateRequest().GetResponse())
 			using (Stream responseStream = response.GetResponseStream())
 			{
 				DataContractSerializer serializer = new DataContractSerializer(Type.GetType("System.String"));
 				string languageDetected = (string) serializer.ReadObject(responseStream);
 				return languageDetected;
 			}
-		}
-
-		private HttpWebRequest CreateRequest(string textToDetect)
-		{
-			string uri = $"http://api.microsofttranslator.com/v2/Http.svc/Detect?text={textToDetect}";
-			var result = (HttpWebRequest)WebRequest.Create(uri);
-			result.Headers.Add("Authorization", GetAuthorizationToken());
-
-			return result;
-		}
-
-		private string GetAuthorizationToken()
-		{
-			return $"Bearer {GetAccessToken().access_token}";
-		}
-
-		private MstfAzureMarketplaceAccessToken GetAccessToken()
-		{
-			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
-			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
-			MstfAzureMarketplaceAuthentication mstfAzureMarketplaceAuth = new MstfAzureMarketplaceAuthentication(
-				AuthenticationContext.ClientId, AuthenticationContext.ClientSecret);
-			return mstfAzureMarketplaceAuth.GetAccessToken();
 		}
 	}
 }
