@@ -76,7 +76,6 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		/// </remarks>
 		private static void TestTranslating(string clientId, string clientSecret)
 		{
-
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
 			string txtToTranslate = "안녕 세상아";
@@ -86,43 +85,17 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			//var translationWebRequest = WebRequest.Create(uri);
 			//translationWebRequest.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
 
-			StreamReader translatedStream;
-			using (WebResponse response = CreateRequest(authenticationContext, txtToTranslate).GetResponse())
-			using (Stream stream = response.GetResponseStream())
-			{
-				var encode = Encoding.GetEncoding("utf-8");
-				translatedStream = new StreamReader(stream, encode);
+			var detector = new LanguageDetector(authenticationContext);
+			var detectedLanguage = detector.DetectMethod(txtToTranslate);
 
-				XmlDocument xTranslation = new XmlDocument();
-				xTranslation.LoadXml(translatedStream.ReadToEnd());
+			var translator = new LanguageTranslator(authenticationContext);
+			var translatedText = translator.Translate(new TranslationArg(txtToTranslate, detectedLanguage));
 
-				Console.WriteLine("Your Translation is: " + xTranslation.InnerText);
-			}
+			Console.WriteLine("Your Translation is: " + translatedText);
+			Console.WriteLine("Press any key to continue...");
+			Console.ReadKey(true);
 		}
 
-		private static HttpWebRequest CreateRequest(AuthenticationContext authenticationContext, string txtToTranslate)
-		{
-			string uri = string.Format(
-				"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en",
-				HttpUtility.UrlEncode(txtToTranslate));
-			var result = (HttpWebRequest)WebRequest.Create(uri);
-			result.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
-			return result;
-		}
-
-		private static string GetAuthorizationToken(AuthenticationContext authenticationContext)
-		{
-			return $"Bearer {GetAccessToken(authenticationContext).access_token}";
-		}
-
-		private static MstfAzureMarketplaceAccessToken GetAccessToken(AuthenticationContext authenticationContext)
-		{
-			//Get Client Id and Client Secret from https://datamarket.azure.com/developer/applications/
-			//Refer obtaining AccessToken (http://msdn.microsoft.com/en-us/library/hh454950.aspx) 
-			MstfAzureMarketplaceAuthentication mstfAzureMarketplaceAuth = new MstfAzureMarketplaceAuthentication(
-				authenticationContext.ClientId, authenticationContext.ClientSecret);
-			return mstfAzureMarketplaceAuth.GetAccessToken();
-		}
 
 		//private static HttpWebRequest GetWebRequest(AuthenticationContext authenticationContext)
 		//{
