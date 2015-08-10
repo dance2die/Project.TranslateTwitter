@@ -2,8 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Web;
-using System.Xml;
 
 namespace Project.TranslateTwitter.Translator.Mstf.Demo
 {
@@ -70,7 +68,6 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		}
 
 
-
 		/// <remarks>
 		/// http://blogs.msdn.com/b/translation/p/gettingstarted2.aspx
 		/// </remarks>
@@ -79,11 +76,6 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
 			string txtToTranslate = "안녕 세상아";
-			//string uri = string.Format(
-			//	"http://api.microsofttranslator.com/v2/Http.svc/Translate?text={0}&from=ko&to=en",
-			//	HttpUtility.UrlEncode(txtToTranslate));
-			//var translationWebRequest = WebRequest.Create(uri);
-			//translationWebRequest.Headers.Add("Authorization", GetAuthorizationToken(authenticationContext));
 
 			var detector = new LanguageDetector(authenticationContext);
 			var detectedLanguage = detector.DetectMethod(txtToTranslate);
@@ -95,28 +87,5 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			Console.WriteLine("Press any key to continue...");
 			Console.ReadKey(true);
 		}
-
-
-		//private static HttpWebRequest GetWebRequest(AuthenticationContext authenticationContext)
-		//{
-		//	string translatorAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
-		//	string requestDetails = string.Format(
-		//		"grant_type=client_credentials&client_id={0}&client_secret={1}&scope=http://api.microsofttranslator.com",
-		//		HttpUtility.UrlEncode(authenticationContext.ClientId),
-		//		HttpUtility.UrlEncode(authenticationContext.ClientSecret));
-
-		//	HttpWebRequest result = (HttpWebRequest)WebRequest.Create(translatorAccessUri);
-		//	result.ContentType = "application/x-www-form-urlencoded";
-		//	result.Method = "POST";
-
-		//	byte[] bytes = Encoding.ASCII.GetBytes(requestDetails);
-		//	result.ContentLength = bytes.Length;
-		//	using (Stream outputStream = result.GetRequestStream())
-		//	{
-		//		outputStream.Write(bytes, 0, bytes.Length);
-		//	}
-
-		//	return result;
-		//}
 	}
 }
