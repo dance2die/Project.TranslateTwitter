@@ -76,7 +76,9 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		{
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
+			Console.WriteLine("Enter Text to translate:");
 			string txtToTranslate = "안녕 세상아";
+			txtToTranslate = Console.ReadLine();
 
 			var detector = new LanguageDetector(authenticationContext);
 			var detectedLanguage = detector.DetectMethod(txtToTranslate);
@@ -84,7 +86,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var translator = new LanguageTranslator(authenticationContext);
 			var translatedText = translator.Translate(new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
 
-			Console.WriteLine("Your Translation is: " + translatedText);
+			Console.WriteLine("Detected Language : {0} and Translation is: {1}", detectedLanguage, translatedText);
 			Console.WriteLine("Press any key to continue...");
 			Console.ReadKey(true);
 		}
