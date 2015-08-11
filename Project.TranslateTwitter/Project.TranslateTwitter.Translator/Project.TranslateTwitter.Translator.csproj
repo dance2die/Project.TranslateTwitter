@@ -43,15 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Microsoft\AuthenticationContext.cs" />
-    <Compile Include="Microsoft\IAuthenticationContext.cs" />
-    <Compile Include="Microsoft\LanguageDetector.cs" />
-    <Compile Include="Microsoft\LanguageLister.cs" />
-    <Compile Include="Microsoft\LanguageParent.cs" />
-    <Compile Include="Microsoft\LanguageTranslator.cs" />
-    <Compile Include="Microsoft\MstfAzureMarketplaceAccessToken.cs" />
-    <Compile Include="Microsoft\MstfAzureMarketplaceAuthentication.cs" />
-    <Compile Include="Microsoft\LanguageTranslatorArg.cs" />
+    <Compile Include="Microsoft\Auth\AuthenticationContext.cs" />
+    <Compile Include="Microsoft\Auth\IAuthenticationContext.cs" />
+    <Compile Include="Microsoft\Commands\LanguageDetector.cs" />
+    <Compile Include="Microsoft\Commands\LanguageLister.cs" />
+    <Compile Include="Microsoft\Commands\LanguageParent.cs" />
+    <Compile Include="Microsoft\Commands\LanguageTranslator.cs" />
+    <Compile Include="Microsoft\Auth\MstfAzureMarketplaceAccessToken.cs" />
+    <Compile Include="Microsoft\Auth\MstfAzureMarketplaceAuthentication.cs" />
+    <Compile Include="Microsoft\Commands\LanguageTranslatorArg.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

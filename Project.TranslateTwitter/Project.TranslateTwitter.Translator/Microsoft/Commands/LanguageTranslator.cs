@@ -4,8 +4,10 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
+using Project.TranslateTwitter.Translator.Microsoft.Auth;
+using Project.TranslateTwitter.Translator.Microsoft.Commands;
 
-namespace Project.TranslateTwitter.Translator.Microsoft
+namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
 	public class LanguageTranslator : LanguageParent
 	{

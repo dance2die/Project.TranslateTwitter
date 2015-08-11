@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
-namespace Project.TranslateTwitter.Translator.Microsoft
+namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
 	public abstract class LanguageParent
 	{

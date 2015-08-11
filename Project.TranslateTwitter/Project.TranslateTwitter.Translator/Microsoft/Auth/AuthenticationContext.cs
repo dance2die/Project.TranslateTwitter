@@ -1,4 +1,4 @@
-﻿namespace Project.TranslateTwitter.Translator.Microsoft
+﻿namespace Project.TranslateTwitter.Translator.Microsoft.Auth
 {
 	public class AuthenticationContext : IAuthenticationContext
 	{

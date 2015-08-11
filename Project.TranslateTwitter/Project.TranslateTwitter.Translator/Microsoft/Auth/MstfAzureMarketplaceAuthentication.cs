@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 
-namespace Project.TranslateTwitter.Translator.Microsoft
+namespace Project.TranslateTwitter.Translator.Microsoft.Auth
 {
 	/// <remarks>
 	/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx

@@ -1,4 +1,4 @@
-﻿namespace Project.TranslateTwitter.Translator.Microsoft
+﻿namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
 	public class LanguageTranslatorArg
 	{

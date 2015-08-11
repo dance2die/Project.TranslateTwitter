@@ -6,8 +6,9 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
-namespace Project.TranslateTwitter.Translator.Microsoft
+namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
 	public class LanguageLister : LanguageParent
 	{

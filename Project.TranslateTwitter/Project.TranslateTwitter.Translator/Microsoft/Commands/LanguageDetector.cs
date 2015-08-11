@@ -2,8 +2,9 @@ using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
+using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
-namespace Project.TranslateTwitter.Translator.Microsoft
+namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
 	public class LanguageDetector : LanguageParent
 	{

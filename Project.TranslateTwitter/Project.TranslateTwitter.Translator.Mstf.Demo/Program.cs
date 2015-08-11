@@ -2,7 +2,8 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using Project.TranslateTwitter.Translator.Microsoft;
+using Project.TranslateTwitter.Translator.Microsoft.Auth;
+using Project.TranslateTwitter.Translator.Microsoft.Commands;
 
 namespace Project.TranslateTwitter.Translator.Mstf.Demo
 {
