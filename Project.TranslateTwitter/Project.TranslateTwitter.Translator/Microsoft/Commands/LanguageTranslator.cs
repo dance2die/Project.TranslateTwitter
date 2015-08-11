@@ -1,23 +1,22 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Xml;
 using Project.TranslateTwitter.Translator.Microsoft.Auth;
-using Project.TranslateTwitter.Translator.Microsoft.Commands;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public class LanguageTranslator : LanguageParent
+	public class LanguageTranslator : LanguageParent<string>
 	{
 		private LanguageTranslatorArg Arg { get; set; }
 
-		protected override string MethodName => "Translate";
+		protected override string CommandName => "Translate";
+		public override string Result { get; set;  }
 
-		public LanguageTranslator(IAuthenticationContext authenticationContext) 
+		public LanguageTranslator(IAuthenticationContext authenticationContext,
+			LanguageTranslatorArg arg) 
 			: base(authenticationContext)
 		{
+			Arg = arg;
 		}
 
 		protected override string GetQueryString()
@@ -25,10 +24,8 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 			return $"?text={Arg.TextToTranslate}&from={Arg.FromLanguage}&to={Arg.ToLanguage}";
 		}
 
-		public string Translate(LanguageTranslatorArg arg)
+		public override void Execute()
 		{
-			Arg = arg;
-
 			using (WebResponse response = CreateRequest().GetResponse())
 			using (Stream responseStream = response.GetResponseStream())
 			{
@@ -40,10 +37,9 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 
 				//return xTranslation.InnerText;
 
-				DataContractSerializer serializer = new DataContractSerializer(Type.GetType("System.String"));
+				DataContractSerializer serializer = new DataContractSerializer(typeof(string));
 				string languageTranslated = (string)serializer.ReadObject(responseStream);
-				return languageTranslated;
-
+				Result = languageTranslated;
 			}
 		}
 	}

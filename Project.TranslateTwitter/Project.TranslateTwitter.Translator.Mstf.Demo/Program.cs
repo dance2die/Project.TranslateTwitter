@@ -17,8 +17,8 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
-			//TestLanguageDetection(clientId, clientSecret);
-			//TestTranslating(clientId, clientSecret);
+			//TestLanguageDetection(authenticationContext);
+			//TestTranslating(authenticationContext);
 			TestSupportedLanguages(authenticationContext);
 
 			Console.ReadKey();
@@ -27,7 +27,10 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		private static void TestSupportedLanguages(AuthenticationContext authenticationContext)
 		{
 			var lister = new LanguageLister(authenticationContext);
-			foreach (string language in lister.GetSupportedLanguages())
+			lister.Execute();
+			var languages = lister.Result;
+
+            foreach (string language in languages)
 			{
 				Console.WriteLine("Language => {0}", language);
 			}
@@ -37,7 +40,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		/// <remarks>
 		/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
 		/// </remarks>
-		private static void TestLanguageDetection(string clientId, string clientSecret)
+		private static void TestLanguageDetection(AuthenticationContext authenticationContext)
 		{
 			try
 			{
@@ -45,8 +48,9 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				string textToDetect = Console.ReadLine();
 				//textToDetect = "会場限定";
 
-				var languageDetector = new LanguageDetector(new AuthenticationContext(clientId, clientSecret));
-				var detectedLanguage = languageDetector.Detect(textToDetect);
+				var languageDetector = new LanguageDetector(authenticationContext, textToDetect);
+				languageDetector.Execute();
+                var detectedLanguage = languageDetector.Result;
 
 				Console.WriteLine("Language Detected: {0}", detectedLanguage);
 				Console.WriteLine("Press any key to continue...");
@@ -88,19 +92,19 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 		/// <remarks>
 		/// http://blogs.msdn.com/b/translation/p/gettingstarted2.aspx
 		/// </remarks>
-		private static void TestTranslating(string clientId, string clientSecret)
+		private static void TestTranslating(AuthenticationContext authenticationContext)
 		{
-			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
-
 			Console.WriteLine("Enter Text to translate:");
 			string txtToTranslate = "안녕 세상아";
 			txtToTranslate = Console.ReadLine();
 
-			var languageDetector = new LanguageDetector(authenticationContext);
-			var detectedLanguage = languageDetector.Detect(txtToTranslate);
+			var languageDetector = new LanguageDetector(authenticationContext, txtToTranslate);
+			languageDetector.Execute();
+			var detectedLanguage = languageDetector.Result;
 
-			var translator = new LanguageTranslator(authenticationContext);
-			var translatedText = translator.Translate(new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
+			var translator = new LanguageTranslator(authenticationContext, new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
+			translator.Execute();
+			var translatedText = translator.Result;
 
 			Console.WriteLine("Detected Language : {0} and Translation is: {1}", detectedLanguage, translatedText);
 			Console.WriteLine("Press any key to continue...");

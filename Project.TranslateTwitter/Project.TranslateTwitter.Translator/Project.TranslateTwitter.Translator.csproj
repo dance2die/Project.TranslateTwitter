@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="Microsoft\Auth\AuthenticationContext.cs" />
     <Compile Include="Microsoft\Auth\IAuthenticationContext.cs" />
+    <Compile Include="Microsoft\Commands\ILanguageCommand.cs" />
+    <Compile Include="Microsoft\Commands\ILanguageCommandWithResult.cs" />
     <Compile Include="Microsoft\Commands\LanguageDetector.cs" />
     <Compile Include="Microsoft\Commands\LanguageLister.cs" />
     <Compile Include="Microsoft\Commands\LanguageParent.cs" />

@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -6,15 +5,17 @@ using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public class LanguageDetector : LanguageParent
+	public class LanguageDetector : LanguageParent<string>
 	{
-		private string _textToDetect;
+		private readonly string _textToDetect;
 
-		protected override string MethodName => "Detect";
+		protected override string CommandName => "Detect";
+		public override string Result { get; set; }
 
-		public LanguageDetector(IAuthenticationContext authenticationContext) 
+		public LanguageDetector(IAuthenticationContext authenticationContext, string textToDetect) 
 			: base(authenticationContext)
 		{
+			_textToDetect = textToDetect;
 		}
 
 		protected override string GetQueryString()
@@ -22,16 +23,13 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 			return $"?text={_textToDetect}";
 		}
 
-		public string Detect(string textToDetect)
+		public override void Execute()
 		{
-			_textToDetect = textToDetect;
-
 			using (WebResponse response = CreateRequest().GetResponse())
 			using (Stream responseStream = response.GetResponseStream())
 			{
-				DataContractSerializer serializer = new DataContractSerializer(Type.GetType("System.String"));
-				string languageDetected = (string) serializer.ReadObject(responseStream);
-				return languageDetected;
+				DataContractSerializer serializer = new DataContractSerializer(typeof(string));
+				Result= (string)serializer.ReadObject(responseStream);
 			}
 		}
 	}
