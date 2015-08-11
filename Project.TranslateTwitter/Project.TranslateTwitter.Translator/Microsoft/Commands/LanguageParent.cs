@@ -4,11 +4,11 @@ using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public abstract class LanguageParent<T> : ILanguageCommand, ILanguageCommandWithResult<T>
+	public abstract class LanguageParent<T> : ILanguageCommandWithResult<T>
 	{
 		private const string REQUEST_URI = "http://api.microsofttranslator.com/v2/Http.svc";
 
-		public IAuthenticationContext AuthenticationContext { get; set; }
+		public IAuthenticationContext AuthenticationContext { get; }
 
 		public LanguageParent(IAuthenticationContext authenticationContext)
 		{
