@@ -6,13 +6,13 @@ using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public class LanguageLister : LanguageParent<List<string>>
+	public class LanguageLookup : LanguageParent<List<string>>
 	{
 		/// <remarks>https://msdn.microsoft.com/en-us/library/ff512421.aspx</remarks>
 		protected override string CommandName => "GetLanguagesForTranslate";
 		public override List<string> Result { get; set; }
 
-		public LanguageLister(IAuthenticationContext authenticationContext) 
+		public LanguageLookup(IAuthenticationContext authenticationContext) 
 			: base(authenticationContext)
 		{
 		}

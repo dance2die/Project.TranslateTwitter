@@ -26,7 +26,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 
 		private static void TestSupportedLanguages(AuthenticationContext authenticationContext)
 		{
-			var lister = new LanguageLister(authenticationContext);
+			var lister = new LanguageLookup(authenticationContext);
 			lister.Execute();
 			var languages = lister.Result;
 
