@@ -9,6 +9,7 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 	{
 		private readonly string _textToDetect;
 
+		/// <remarks>https://msdn.microsoft.com/en-us/library/ff512411.aspx</remarks>
 		protected override string CommandName => "Detect";
 		public override string Result { get; set; }
 

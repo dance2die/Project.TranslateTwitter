@@ -9,6 +9,7 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 	{
 		private LanguageTranslatorArg Arg { get; set; }
 
+		/// <remarks>https://msdn.microsoft.com/en-us/library/ff512411.aspx?f=255&MSPPError=-2147217396</remarks>
 		protected override string CommandName => "Translate";
 		public override string Result { get; set;  }
 
