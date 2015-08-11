@@ -5,7 +5,7 @@ using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public class LanguageTranslator : LanguageParent<string>
+	public class TranslatorCommand : ParentCommand<string>
 	{
 		private LanguageTranslatorArg Arg { get; set; }
 
@@ -13,7 +13,7 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 		protected override string CommandName => "Translate";
 		public override string Result { get; set;  }
 
-		public LanguageTranslator(IAuthenticationContext authenticationContext,
+		public TranslatorCommand(IAuthenticationContext authenticationContext,
 			LanguageTranslatorArg arg) 
 			: base(authenticationContext)
 		{

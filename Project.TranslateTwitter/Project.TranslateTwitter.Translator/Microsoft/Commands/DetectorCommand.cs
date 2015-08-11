@@ -5,7 +5,7 @@ using Project.TranslateTwitter.Translator.Microsoft.Auth;
 
 namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 {
-	public class LanguageDetector : LanguageParent<string>
+	public class DetectorCommand : ParentCommand<string>
 	{
 		private readonly string _textToDetect;
 
@@ -13,7 +13,7 @@ namespace Project.TranslateTwitter.Translator.Microsoft.Commands
 		protected override string CommandName => "Detect";
 		public override string Result { get; set; }
 
-		public LanguageDetector(IAuthenticationContext authenticationContext, string textToDetect) 
+		public DetectorCommand(IAuthenticationContext authenticationContext, string textToDetect) 
 			: base(authenticationContext)
 		{
 			_textToDetect = textToDetect;

@@ -47,10 +47,10 @@
     <Compile Include="Microsoft\Auth\IAuthenticationContext.cs" />
     <Compile Include="Microsoft\Commands\ILanguageCommand.cs" />
     <Compile Include="Microsoft\Commands\ILanguageCommandWithResult.cs" />
-    <Compile Include="Microsoft\Commands\LanguageDetector.cs" />
-    <Compile Include="Microsoft\Commands\LanguageLookup.cs" />
-    <Compile Include="Microsoft\Commands\LanguageParent.cs" />
-    <Compile Include="Microsoft\Commands\LanguageTranslator.cs" />
+    <Compile Include="Microsoft\Commands\DetectorCommand.cs" />
+    <Compile Include="Microsoft\Commands\LookupCommand.cs" />
+    <Compile Include="Microsoft\Commands\ParentCommand.cs" />
+    <Compile Include="Microsoft\Commands\TranslatorCommand.cs" />
     <Compile Include="Microsoft\Auth\MstfAzureMarketplaceAccessToken.cs" />
     <Compile Include="Microsoft\Auth\MstfAzureMarketplaceAuthentication.cs" />
     <Compile Include="Microsoft\Commands\LanguageTranslatorArg.cs" />

@@ -18,15 +18,15 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
 
 			//TestLanguageDetection(authenticationContext);
-			//TestTranslating(authenticationContext);
-			TestSupportedLanguages(authenticationContext);
+			TestTranslating(authenticationContext);
+			//TestSupportedLanguages(authenticationContext);
 
 			Console.ReadKey();
 		}
 
 		private static void TestSupportedLanguages(AuthenticationContext authenticationContext)
 		{
-			var lister = new LanguageLookup(authenticationContext);
+			var lister = new LookupCommand(authenticationContext);
 			lister.Execute();
 			var languages = lister.Result;
 
@@ -48,7 +48,7 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 				string textToDetect = Console.ReadLine();
 				//textToDetect = "会場限定";
 
-				var languageDetector = new LanguageDetector(authenticationContext, textToDetect);
+				var languageDetector = new DetectorCommand(authenticationContext, textToDetect);
 				languageDetector.Execute();
                 var detectedLanguage = languageDetector.Result;
 
@@ -98,11 +98,11 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			string txtToTranslate = "안녕 세상아";
 			txtToTranslate = Console.ReadLine();
 
-			var languageDetector = new LanguageDetector(authenticationContext, txtToTranslate);
+			var languageDetector = new DetectorCommand(authenticationContext, txtToTranslate);
 			languageDetector.Execute();
 			var detectedLanguage = languageDetector.Result;
 
-			var translator = new LanguageTranslator(authenticationContext, new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
+			var translator = new Microsoft.Commands.TranslatorCommand(authenticationContext, new LanguageTranslatorArg(txtToTranslate, detectedLanguage));
 			translator.Execute();
 			var translatedText = translator.Result;
 
