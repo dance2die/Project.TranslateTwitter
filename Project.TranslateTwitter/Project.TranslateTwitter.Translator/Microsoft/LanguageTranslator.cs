@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
@@ -16,26 +18,31 @@ namespace Project.TranslateTwitter.Translator.Microsoft
 		{
 		}
 
+		protected override string GetQueryString()
+		{
+			return $"?text={Arg.TextToTranslate}&from={Arg.FromLanguage}&to={Arg.ToLanguage}";
+		}
+
 		public string Translate(LanguageTranslatorArg arg)
 		{
 			Arg = arg;
 
 			using (WebResponse response = CreateRequest().GetResponse())
-			using (Stream stream = response.GetResponseStream())
+			using (Stream responseStream = response.GetResponseStream())
 			{
-				var encode = Encoding.GetEncoding("utf-8");
-				var translatedStream = new StreamReader(stream, encode);
+				//var encode = Encoding.GetEncoding("utf-8");
+				//var translatedStream = new StreamReader(responseStream, encode);
 
-				XmlDocument xTranslation = new XmlDocument();
-				xTranslation.LoadXml(translatedStream.ReadToEnd());
+				//XmlDocument xTranslation = new XmlDocument();
+				//xTranslation.LoadXml(translatedStream.ReadToEnd());
 
-				return xTranslation.InnerText;
+				//return xTranslation.InnerText;
+
+				DataContractSerializer serializer = new DataContractSerializer(Type.GetType("System.String"));
+				string languageTranslated = (string)serializer.ReadObject(responseStream);
+				return languageTranslated;
+
 			}
-		}
-
-		protected override string GetQueryString()
-		{
-			return $"?text={Arg.TextToTranslate}&from={Arg.FromLanguage}&to={Arg.ToLanguage}";
 		}
 	}
 }
