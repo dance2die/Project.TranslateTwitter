@@ -14,9 +14,24 @@ namespace Project.TranslateTwitter.Translator.Mstf.Demo
 			string clientSecret = Environment.GetEnvironmentVariable(
 				"Project_TranslateTwitter.ClientSecret", EnvironmentVariableTarget.User);
 
-			TestTranslating(clientId, clientSecret);
+			var authenticationContext = new AuthenticationContext(clientId, clientSecret);
+
 			//TestLanguageDetection(clientId, clientSecret);
+			//TestTranslating(clientId, clientSecret);
+			TestSupportedLanguages(authenticationContext);
+
+			Console.ReadKey();
 		}
+
+		private static void TestSupportedLanguages(AuthenticationContext authenticationContext)
+		{
+			var lister = new LanguageLister(authenticationContext);
+			foreach (string language in lister.GetSupportedLanguages())
+			{
+				Console.WriteLine("Language => {0}", language);
+			}
+		}
+
 
 		/// <remarks>
 		/// https://msdn.microsoft.com/en-us/library/Ff512411.aspx
