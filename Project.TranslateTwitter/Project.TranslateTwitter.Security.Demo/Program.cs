@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LinqToTwitter;
 using Nito.AsyncEx;
+using TweetSharp;
 
 namespace Project.TranslateTwitter.Security.Demo
 {
@@ -12,7 +13,25 @@ namespace Project.TranslateTwitter.Security.Demo
 	{
 		public static void Main(string[] args)
 		{
-			AsyncContext.Run(() => TestSignInWithXAuth());
+			//AsyncContext.Run(() => TestSignInWithXAuth());
+
+			TestWithTweetSharpXAuth();
+		}
+
+		private static void TestWithTweetSharpXAuth()
+		{
+			// OAuth Access Token Exchange
+			TwitterService service = new TwitterService(OAuthProperties.ConsumerKey, OAuthProperties.ConsumerKeySecret);
+
+			Console.WriteLine("Enter Username...");
+			string username = Console.ReadLine();
+			Console.WriteLine("Enter Password...");
+			string password = Console.ReadLine();
+			OAuthAccessToken accessToken = service.GetAccessTokenWithXAuth(username, password);
+
+			service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+			var verifyCredentialsOptions = new VerifyCredentialsOptions { IncludeEntities = true };
+			TwitterUser user = service.VerifyCredentials(verifyCredentialsOptions);
 		}
 
 		private async static void TestSignInWithXAuth()
