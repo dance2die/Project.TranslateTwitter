@@ -21,17 +21,18 @@ namespace Project.TranslateTwitter.Security.Demo
 		private static void TestWithTweetSharpXAuth()
 		{
 			// OAuth Access Token Exchange
-			TwitterService service = new TwitterService(OAuthProperties.ConsumerKey, OAuthProperties.ConsumerKeySecret);
+			TwitterService twitterService = new TwitterService(OAuthProperties.ConsumerKey, OAuthProperties.ConsumerKeySecret);
+			twitterService.AuthenticateWith(OAuthProperties.AccessToken, OAuthProperties.AccessTokenSecret);
 
 			Console.WriteLine("Enter Username...");
 			string username = Console.ReadLine();
 			Console.WriteLine("Enter Password...");
 			string password = Console.ReadLine();
-			OAuthAccessToken accessToken = service.GetAccessTokenWithXAuth(username, password);
+			OAuthAccessToken accessToken = twitterService.GetAccessTokenWithXAuth(username, password);
 
-			service.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
+			twitterService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret);
 			var verifyCredentialsOptions = new VerifyCredentialsOptions { IncludeEntities = true };
-			TwitterUser user = service.VerifyCredentials(verifyCredentialsOptions);
+			TwitterUser user = twitterService.VerifyCredentials(verifyCredentialsOptions);
 		}
 
 		private async static void TestSignInWithXAuth()
