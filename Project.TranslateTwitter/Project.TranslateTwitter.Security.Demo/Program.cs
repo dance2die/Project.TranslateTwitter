@@ -22,7 +22,109 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			// copied from Project.EncryptTwitter
 			// Need to roll out my own auth library.
-			Test1();
+			//Test1();
+
+			// http://www.codeproject.com/Articles/676313/Twitter-API-v-with-OAuth
+			Verify_Credentials();
+		}
+
+		/// <summary>
+		/// http://www.codeproject.com/Articles/676313/Twitter-API-v-with-OAuth
+		/// </summary>
+		public static void Verify_Credentials()
+		{
+			string oauthconsumerkey = OAuthProperties.ConsumerKey;
+			string oauthconsumersecret = OAuthProperties.ConsumerKeySecret;
+			string oauthsignaturemethod = "HMAC-SHA1";
+			string oauthversion = "1.0";
+			string oauthtoken = OAuthProperties.AccessToken;
+			string oauthtokensecret = OAuthProperties.AccessTokenSecret;
+			string oauthnonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+			TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			string oauthtimestamp = Convert.ToInt64(ts.TotalSeconds).ToString();
+			SortedDictionary<string, string> basestringParameters = new SortedDictionary<string, string>();
+			basestringParameters.Add("oauth_version", "1.0");
+			basestringParameters.Add("oauth_consumer_key", oauthconsumerkey);
+			basestringParameters.Add("oauth_nonce", oauthnonce);
+			basestringParameters.Add("oauth_signature_method", "HMAC-SHA1");
+			basestringParameters.Add("oauth_timestamp", oauthtimestamp);
+			basestringParameters.Add("oauth_token", oauthtoken);
+			//GS - Build the signature string
+			StringBuilder baseString = new StringBuilder();
+			baseString.Append("GET" + "&");
+			baseString.Append(EncodeCharacters(Uri.EscapeDataString("https://api.twitter.com/1.1/account/verify_credentials.json") + "&"));
+			foreach (KeyValuePair<string, string> entry in basestringParameters)
+			{
+				baseString.Append(EncodeCharacters(Uri.EscapeDataString(entry.Key + "=" + entry.Value + "&")));
+			}
+
+			//Since the baseString is urlEncoded we have to remove the last 3 chars - %26
+			string finalBaseString = baseString.ToString().Substring(0, baseString.Length - 3);
+
+			//Build the signing key
+			string signingKey = EncodeCharacters(Uri.EscapeDataString(oauthconsumersecret)) + "&" +
+			EncodeCharacters(Uri.EscapeDataString(oauthtokensecret));
+
+			//Sign the request
+			HMACSHA1 hasher = new HMACSHA1(new ASCIIEncoding().GetBytes(signingKey));
+			string oauthsignature = Convert.ToBase64String(hasher.ComputeHash(new ASCIIEncoding().GetBytes(finalBaseString)));
+
+			//Tell Twitter we don't do the 100 continue thing
+			ServicePointManager.Expect100Continue = false;
+
+			//authorization header
+			HttpWebRequest hwr = (HttpWebRequest)WebRequest.Create(
+			  @"https://api.twitter.com/1.1/account/verify_credentials.json");
+			StringBuilder authorizationHeaderParams = new StringBuilder();
+			authorizationHeaderParams.Append("OAuth ");
+			authorizationHeaderParams.Append("oauth_nonce=" + "\"" + Uri.EscapeDataString(oauthnonce) + "\",");
+			authorizationHeaderParams.Append("oauth_signature_method=" + "\"" + Uri.EscapeDataString(oauthsignaturemethod) + "\",");
+			authorizationHeaderParams.Append("oauth_timestamp=" + "\"" + Uri.EscapeDataString(oauthtimestamp) + "\",");
+			authorizationHeaderParams.Append("oauth_consumer_key=" + "\"" + Uri.EscapeDataString(oauthconsumerkey) + "\",");
+			if (!string.IsNullOrEmpty(oauthtoken))
+				authorizationHeaderParams.Append("oauth_token=" + "\"" + Uri.EscapeDataString(oauthtoken) + "\",");
+			authorizationHeaderParams.Append("oauth_signature=" + "\"" + Uri.EscapeDataString(oauthsignature) + "\",");
+			authorizationHeaderParams.Append("oauth_version=" + "\"" + Uri.EscapeDataString(oauthversion) + "\"");
+			hwr.Headers.Add("Authorization", authorizationHeaderParams.ToString());
+			hwr.Method = "GET";
+			hwr.ContentType = "application/x-www-form-urlencoded";
+
+			//Allow us a reasonable timeout in case Twitter's busy
+			hwr.Timeout = 3 * 60 * 1000;
+			try
+			{
+				//hwr.Proxy = new WebProxy("enter proxy details/address");
+				HttpWebResponse rsp = hwr.GetResponse() as HttpWebResponse;
+				Stream dataStream = rsp.GetResponseStream();
+				//Open the stream using a StreamReader for easy access.
+				StreamReader reader = new StreamReader(dataStream);
+				//Read the content.
+				string responseFromServer = reader.ReadToEnd();
+			}
+			catch (Exception ex)
+			{
+
+			}
+		}
+
+		private static string EncodeCharacters(string data)
+		{
+			//as per OAuth Core 1.0 Characters in the unreserved character set MUST NOT be encoded
+			//unreserved = ALPHA, DIGIT, '-', '.', '_', '~'
+			if (data.Contains("!"))
+				data = data.Replace("!", "%21");
+			if (data.Contains("'"))
+				data = data.Replace("'", "%27");
+			if (data.Contains("("))
+				data = data.Replace("(", "%28");
+			if (data.Contains(")"))
+				data = data.Replace(")", "%29");
+			if (data.Contains("*"))
+				data = data.Replace("*", "%2A");
+			if (data.Contains(","))
+				data = data.Replace(",", "%2C");
+
+			return data;
 		}
 
 		private static void Test1()
@@ -51,8 +153,8 @@ namespace Project.TranslateTwitter.Security.Demo
 
 		private static HttpWebRequest GetTwitterWebRequest(string status)
 		{
-			var oauth_token = OAuthProperties.Token;
-			var oauth_token_secret = OAuthProperties.TokenSecret;
+			var oauth_token = OAuthProperties.AccessToken;
+			var oauth_token_secret = OAuthProperties.AccessTokenSecret;
 			var oauth_consumer_key = OAuthProperties.ConsumerKey;
 			var oauth_consumer_secret = OAuthProperties.ConsumerKeySecret;
 
