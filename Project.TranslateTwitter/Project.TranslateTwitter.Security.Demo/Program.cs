@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using LinqToTwitter;
 using Nito.AsyncEx;
 using TweetSharp;
+using Hammock;
+using Hammock.Authentication.OAuth;
 
 namespace Project.TranslateTwitter.Security.Demo
 {
@@ -31,9 +33,49 @@ namespace Project.TranslateTwitter.Security.Demo
 			string userName = Console.ReadLine();
 			Console.Write("Enter Password:");
 			string password = Console.ReadLine();
-			TestXAuth(userName, password);
+			//TestXAuth(userName, password);
 			//var sig = GetXAuthSignature(userName, password);
 			//Console.WriteLine("xauth_signature = {0}", sig);
+
+			TestXAuthWithHammock(userName, password);
+		}
+
+		private static void TestXAuthWithHammock(string userName, string password)
+		{
+			RestClient client = new RestClient
+			{
+				Authority = "https://api.twitter.com",
+				
+				//HasElevatedPermissions = true,
+				Credentials = new OAuthCredentials()
+				{
+					ConsumerKey = OAuthProperties.ConsumerKey,
+					ConsumerSecret = OAuthProperties.ConsumerKeySecret,
+					SignatureMethod = OAuthSignatureMethod.HmacSha1,
+					ParameterHandling = OAuthParameterHandling.HttpAuthorizationHeader,
+					Version = "1.0"
+				}
+			};
+
+			RestRequest request = new RestRequest()
+			{
+				Path = "oauth/access_token",
+			};
+
+			request.AddParameter("x_auth_mode", "client_auth");
+			request.AddParameter("x_auth_username", userName);
+			request.AddParameter("x_auth_password", password);
+
+			//client.BeginRequest(request, Callback);
+
+			var restResponse = client.Request(request);
+			Console.WriteLine("Content = {0}", restResponse.Content);
+		}
+
+		private static void Callback(RestRequest request, RestResponse response, object userState)
+		{
+			// the response from the server
+			Console.WriteLine(response.Content);
 		}
 
 		/// <summary>
