@@ -69,10 +69,10 @@ namespace Project.TranslateTwitter.Security.Demo
 				new ASCIIEncoding().GetBytes(
 					DateTime.Now.Ticks.ToString()));
 			var timeSpan = DateTime.UtcNow
-			               - new DateTime(1970, 1, 1, 0, 0, 0, 0,
-				               DateTimeKind.Utc);
+						   - new DateTime(1970, 1, 1, 0, 0, 0, 0,
+							   DateTimeKind.Utc);
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-			var resource_url = "https://api.twitter.com/oauth/access_token";
+			const string resource_url = "https://api.twitter.com/oauth/access_token";
 
 			var x_auth_mode = "client_auth";
 			var x_auth_username = userName;
@@ -80,25 +80,25 @@ namespace Project.TranslateTwitter.Security.Demo
 
 
 
-			oauth_consumer_key = "JvyS7DO2qd6NNTsXJ4E7zA";
-			oauth_consumer_secret = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c";
-			oauth_nonce = "6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo";
-			oauth_signature_method = "HMAC-SHA1";
-			oauth_timestamp = "1284565601";
-			oauth_version = "1.0";
-			x_auth_mode = "client_auth";
-			x_auth_password = "twitter-xauth";
-			x_auth_username = "oauth_test_exec";
+			//oauth_consumer_key = "JvyS7DO2qd6NNTsXJ4E7zA";
+			//oauth_consumer_secret = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c";
+			//oauth_nonce = "6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo";
+			//oauth_signature_method = "HMAC-SHA1";
+			//oauth_timestamp = "1284565601";
+			//oauth_version = "1.0";
+			//x_auth_mode = "client_auth";
+			//x_auth_password = "twitter-xauth";
+			//x_auth_username = "oauth_test_exec";
 
 
 			string postBody = string.Format(
-				"x_auth_mode={0}&x_auth_password={1}&x_auth_username={2}", 
+				"x_auth_mode={0}&x_auth_password={1}&x_auth_username={2}",
 				x_auth_mode, x_auth_password, x_auth_username);
 			//postBody = Uri.EscapeDataString(postBody);
 
 			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
-			                 "&oauth_timestamp={3}&oauth_version={4}" +
-			                 "&" + postBody;
+							 "&oauth_timestamp={3}&oauth_version={4}" +
+							 "&" + postBody;
 
 
 			var baseString = string.Format(baseFormat,
@@ -139,7 +139,9 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			ServicePointManager.Expect100Continue = false;
 
-			//byte[] encodedBody = Encoding.ASCII.GetBytes(postBody);
+			//postBody = Uri.EscapeDataString(postBody);
+			//baseString = Uri.EscapeDataString(baseString);
+            //byte[] encodedBody = Encoding.ASCII.GetBytes(postBody);
 			//byte[] encodedBody = Encoding.ASCII.GetBytes(baseString);
 			byte[] encodedBody = Encoding.UTF8.GetBytes(postBody);
 			//byte[] encodedBody = Encoding.UTF8.GetBytes(baseString);
@@ -161,7 +163,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			RestClient client = new RestClient
 			{
 				Authority = "https://api.twitter.com",
-				
+
 				//HasElevatedPermissions = true,
 				Credentials = new OAuthCredentials()
 				{
@@ -329,15 +331,15 @@ namespace Project.TranslateTwitter.Security.Demo
 				new ASCIIEncoding().GetBytes(
 					DateTime.Now.Ticks.ToString()));
 			var timeSpan = DateTime.UtcNow
-			               - new DateTime(1970, 1, 1, 0, 0, 0, 0,
-				               DateTimeKind.Utc);
+						   - new DateTime(1970, 1, 1, 0, 0, 0, 0,
+							   DateTimeKind.Utc);
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/oauth/access_token";
 
 
 			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
-			                 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}" +
-			                 "&x_auth_mode=client_auth&x_auth_username={6}&x_auth_password={7}";
+							 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}" +
+							 "&x_auth_mode=client_auth&x_auth_username={6}&x_auth_password={7}";
 
 			string x_auth_username = userName;
 			string x_auth_password = password;
@@ -364,7 +366,7 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			string oauth_signature;
 			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
-				//using (HMACSHA1 hasher = new HMACSHA1())
+			//using (HMACSHA1 hasher = new HMACSHA1())
 			{
 				// https://dev.twitter.com/oauth/xauth
 				var test =
