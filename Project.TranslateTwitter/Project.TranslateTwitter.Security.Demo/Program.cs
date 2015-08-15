@@ -173,6 +173,102 @@ namespace Project.TranslateTwitter.Security.Demo
 			}
 		}
 
+		private static HttpWebRequest GetXAuthWebRequest(string userName, string password)
+		{
+			var oauth_token = "";
+			var oauth_token_secret = "";
+			var oauth_consumer_key = OAuthProperties.ConsumerKey;
+			var oauth_consumer_secret = OAuthProperties.ConsumerKeySecret;
+
+			var oauth_version = "1.0";
+			var oauth_signature_method = "HMAC-SHA1";
+			var oauth_nonce = Convert.ToBase64String(
+				new ASCIIEncoding().GetBytes(
+					DateTime.Now.Ticks.ToString()));
+			var timeSpan = DateTime.UtcNow
+						   - new DateTime(1970, 1, 1, 0, 0, 0, 0,
+							   DateTimeKind.Utc);
+			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+			var resource_url = "https://api.twitter.com/oauth/access_token";
+
+			var x_auth_mode = "client_auth";
+			var x_auth_username = userName;
+			var x_auth_password = password;
+
+
+
+			//oauth_consumer_key = "JvyS7DO2qd6NNTsXJ4E7zA";
+			//oauth_consumer_secret = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c";
+			//oauth_nonce = "6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo";
+			//oauth_signature_method = "HMAC-SHA1";
+			//oauth_timestamp = "1284565601";
+			//oauth_version = "1.0";
+			//x_auth_mode = "client_auth";
+			//x_auth_password = "twitter-xauth";
+			//x_auth_username = "oauth_test_exec";
+
+
+			string postBody = string.Format(
+				"x_auth_mode={0}&x_auth_password={1}&x_auth_username={2}", 
+				x_auth_mode, x_auth_password, x_auth_username);
+
+			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
+							 "&oauth_timestamp={3}&oauth_version={4}" +
+							 "&" + postBody;
+
+
+			var baseString = string.Format(baseFormat,
+				oauth_consumer_key,
+				oauth_nonce,
+				oauth_signature_method,
+				oauth_timestamp,
+				oauth_version
+			);
+
+			baseString = string.Concat("POST&", Uri.EscapeDataString(resource_url),
+				"&", Uri.EscapeDataString(baseString));
+
+			oauth_token_secret = "";
+			var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret),
+				"&", Uri.EscapeDataString(oauth_token_secret));
+
+			string oauth_signature;
+			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
+			{
+				oauth_signature = Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
+			}
+
+			var headerFormat =
+				"OAuth oauth_nonce=\"{0}\",oauth_signature_method=\"{1}\"," +
+				"oauth_timestamp=\"{2}\",oauth_consumer_key=\"{3}\"," +
+				"oauth_signature=\"{4}\"," +
+				"oauth_version=\"{5}\"";
+
+			var authHeader = string.Format(headerFormat,
+				Uri.EscapeDataString(oauth_nonce),
+				Uri.EscapeDataString(oauth_signature_method),
+				Uri.EscapeDataString(oauth_timestamp),
+				Uri.EscapeDataString(oauth_consumer_key),
+				Uri.EscapeDataString(oauth_signature),
+				Uri.EscapeDataString(oauth_version)
+				);
+
+			ServicePointManager.Expect100Continue = false;
+
+			byte[] encodedBody = Encoding.ASCII.GetBytes(postBody);
+			var request = (HttpWebRequest)WebRequest.Create(resource_url);
+			request.Headers.Add("Authorization", authHeader);
+			request.Method = "POST";
+			request.ContentType = "application/x-www-form-urlencoded";
+			request.ContentLength = encodedBody.Length;
+			using (Stream requeStream = request.GetRequestStream())
+			{
+				requeStream.Write(encodedBody, 0, encodedBody.Length);
+			}
+
+			return request;
+		}
+
 		private static string GetXAuthSignature(string userName, string password)
 		{
 			var oauth_token = OAuthProperties.AccessToken;
@@ -186,15 +282,15 @@ namespace Project.TranslateTwitter.Security.Demo
 				new ASCIIEncoding().GetBytes(
 					DateTime.Now.Ticks.ToString()));
 			var timeSpan = DateTime.UtcNow
-						   - new DateTime(1970, 1, 1, 0, 0, 0, 0,
-							   DateTimeKind.Utc);
+			               - new DateTime(1970, 1, 1, 0, 0, 0, 0,
+				               DateTimeKind.Utc);
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/oauth/access_token";
 
 
 			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
-							 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}" +
-							 "&x_auth_mode=client_auth&x_auth_username={6}&x_auth_password={7}";
+			                 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}" +
+			                 "&x_auth_mode=client_auth&x_auth_username={6}&x_auth_password={7}";
 
 			string x_auth_username = userName;
 			string x_auth_password = password;
@@ -208,7 +304,7 @@ namespace Project.TranslateTwitter.Security.Demo
 				oauth_version,
 				x_auth_username,
 				x_auth_password
-			);
+				);
 
 			baseString = string.Concat("POST&", Uri.EscapeDataString(resource_url),
 				"&", Uri.EscapeDataString(baseString));
@@ -217,11 +313,11 @@ namespace Project.TranslateTwitter.Security.Demo
 			var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret),
 				"&", Uri.EscapeDataString(oauth_token_secret));
 			//var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret));
-			compositeKey = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c&";
+			//compositeKey = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c&";
 
 			string oauth_signature;
 			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
-			//using (HMACSHA1 hasher = new HMACSHA1())
+				//using (HMACSHA1 hasher = new HMACSHA1())
 			{
 				// https://dev.twitter.com/oauth/xauth
 				var test =
@@ -233,91 +329,6 @@ namespace Project.TranslateTwitter.Security.Demo
 			}
 
 			return oauth_signature;
-		}
-
-		private static HttpWebRequest GetXAuthWebRequest(string userName, string password)
-		{
-			var oauth_token = OAuthProperties.AccessToken;
-			var oauth_token_secret = OAuthProperties.AccessTokenSecret;
-			var oauth_consumer_key = OAuthProperties.ConsumerKey;
-			var oauth_consumer_secret = OAuthProperties.ConsumerKeySecret;
-
-			var oauth_version = "1.0";
-			var oauth_signature_method = "HMAC-SHA1";
-			var oauth_nonce = Convert.ToBase64String(
-				new ASCIIEncoding().GetBytes(
-					DateTime.Now.Ticks.ToString()));
-			var timeSpan = DateTime.UtcNow
-						   - new DateTime(1970, 1, 1, 0, 0, 0, 0,
-							   DateTimeKind.Utc);
-			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-			var resource_url = "https://api.twitter.com/oauth/access_token";
-
-
-			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
-							 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}" +
-							 "&x_auth_mode=client_auth&x_auth_username={6}&x_auth_password={7}";
-
-			string x_auth_username = userName;
-			string x_auth_password = password;
-
-			var baseString = string.Format(baseFormat,
-				oauth_consumer_key,
-				oauth_nonce,
-				oauth_signature_method,
-				oauth_timestamp,
-				oauth_token,
-				oauth_version,
-				x_auth_username,
-				x_auth_password
-			);
-
-			baseString = string.Concat("POST&", Uri.EscapeDataString(resource_url),
-				"&", Uri.EscapeDataString(baseString));
-
-			oauth_token_secret = "";
-			var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret),
-				"&", Uri.EscapeDataString(oauth_token_secret));
-			//var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret));
-			compositeKey = "9z6157pUbOBqtbm0A0q4r29Y2EYzIHlUwbF4Cl9c&";
-
-			string oauth_signature;
-			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
-			//using (HMACSHA1 hasher = new HMACSHA1())
-			{
-				// https://dev.twitter.com/oauth/xauth
-				var test =
-					Encoding.ASCII.GetBytes(
-						"POST&https%3A%2F%2Fapi.twitter.com%2Foauth%2Faccess_token&oauth_consumer_key%3DJvyS7DO2qd6NNTsXJ4E7zA%26oauth_nonce%3D6AN2dKRzxyGhmIXUKSmp1JcB4pckM8rD3frKMTmVAo%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1284565601%26oauth_version%3D1.0%26x_auth_mode%3Dclient_auth%26x_auth_password%3Dtwitter-xauth%26x_auth_username%3Doauth_test_exec");
-				oauth_signature = Convert.ToBase64String(
-					hasher.ComputeHash(test));
-				//hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
-			}
-
-			var headerFormat =
-				"OAuth oauth_nonce=\"{0}\", oauth_signature_method=\"{1}\", " +
-				"oauth_timestamp=\"{2}\", oauth_consumer_key=\"{3}\", " +
-				"oauth_token=\"{4}\", oauth_signature=\"{5}\", " +
-				"oauth_version=\"{6}\"";
-
-			var authHeader = string.Format(headerFormat,
-				Uri.EscapeDataString(oauth_nonce),
-				Uri.EscapeDataString(oauth_signature_method),
-				Uri.EscapeDataString(oauth_timestamp),
-				Uri.EscapeDataString(oauth_consumer_key),
-				Uri.EscapeDataString(oauth_token),
-				Uri.EscapeDataString(oauth_signature),
-				Uri.EscapeDataString(oauth_version)
-				);
-
-			ServicePointManager.Expect100Continue = false;
-
-			var request = (HttpWebRequest)WebRequest.Create(resource_url);
-			request.Headers.Add("Authorization", authHeader);
-			request.Method = "POST";
-			request.ContentType = "application/x-www-form-urlencoded";
-
-			return request;
 		}
 
 
