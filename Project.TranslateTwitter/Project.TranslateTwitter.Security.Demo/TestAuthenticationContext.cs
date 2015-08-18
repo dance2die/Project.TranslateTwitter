@@ -1,4 +1,4 @@
-namespace Project.TranslateTwitter.Security
+namespace Project.TranslateTwitter.Security.Demo
 {
 	/// <summary>
 	/// Used to test
