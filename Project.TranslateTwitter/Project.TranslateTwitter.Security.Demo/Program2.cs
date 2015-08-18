@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Project.TranslateTwitter.Security.Demo
@@ -27,7 +25,8 @@ namespace Project.TranslateTwitter.Security.Demo
 			Dictionary<string, string> requestParams = GetRequestParams();
 			requestParams = GetTestRequestParams();
 
-			var signature = CreateSignature(httpMethod, baseUrl, requestParams);
+			var signatureBuilder = new OAuthSignatureBuilder(new TestAuthenticationContext());
+			var signature = signatureBuilder.CreateSignature(new SignatureInput(httpMethod, baseUrl, requestParams));
 			Console.WriteLine("Signature: {0}", signature);
 		}
 
@@ -78,81 +77,6 @@ namespace Project.TranslateTwitter.Security.Demo
 		{
 			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-		}
-
-		private static string CreateSignature(
-			string httpMethod, string baseUrl, IDictionary<string, string> requestParams)
-		{
-			var result = string.Empty;
-
-			// 3.) Creating the signature base string
-			string signatureBaseString = CreateSignatureBaseString(httpMethod, baseUrl, requestParams);
-
-			// 4.) Getting a signing key
-			string signingKey = GetSigningKey();
-
-
-			// 5.) Calculating the signature
-			result = CalculateSignature(signingKey, signatureBaseString);
-
-			return result;
-		}
-
-		private static string CalculateSignature(string signingKey, string signatureBaseString)
-		{
-			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(signingKey)))
-			{
-				return Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(signatureBaseString)));
-			}
-		}
-
-		private static string GetSigningKey()
-		{
-			//return $"{OAuthProperties.ConsumerKeySecret}&{OAuthProperties.AccessTokenSecret}";
-			return $"{"kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"}&{"LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"}";
-		}
-
-		private static string CreateSignatureBaseString(
-			string httpMethod, string baseUrl, IDictionary<string, string> requestParams)
-		{
-			const string separator = "&";
-
-			var result = new StringBuilder();
-
-			// 1.) Convert the HTTP Method to uppercase and set the output string equal to this value.
-			result.Append(httpMethod.ToUpperInvariant());
-
-			// 2.) Append the ‘&’ character to the output string.
-			result.Append(separator);
-
-			// 3.) Percent encode the URL and append it to the output string.
-			result.Append(Uri.EscapeDataString(baseUrl));
-
-			// 4.) Append the ‘&’ character to the output string.
-			result.Append(separator);
-
-			// 5.) Percent encode the parameter string and append it to the output string.
-			var baseString = GetParameterString(requestParams, separator);
-			result.Append(Uri.EscapeDataString(baseString));
-
-			return result.ToString();
-		}
-
-		private static string GetParameterString(IDictionary<string, string> requestParams, string separator)
-		{
-			var query = (from requestParam in requestParams
-						// According to Twitter spec,
-						// Sort the list of parameters alphabetically[1] by encoded key[2].
-						 orderby requestParam.Key
-						select new {requestParam.Key, requestParam.Value}).ToList();
-
-			List<string> paramList = new List<string>(query.Count);
-			foreach (var requestParam in query)
-			{
-				paramList.Add($"{requestParam.Key}={Uri.EscapeDataString(requestParam.Value)}");
-			}
-
-			return string.Join(separator, paramList.ToArray());
 		}
 	}
 }
