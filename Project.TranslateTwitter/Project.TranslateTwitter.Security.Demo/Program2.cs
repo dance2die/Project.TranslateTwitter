@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Project.TranslateTwitter.Security.Demo
@@ -87,7 +88,28 @@ namespace Project.TranslateTwitter.Security.Demo
 			// 3.) Creating the signature base string
 			string signatureBaseString = CreateSignatureBaseString(httpMethod, baseUrl, requestParams);
 
+			// 4.) Getting a signing key
+			string signingKey = GetSigningKey();
+
+
+			// 5.) Calculating the signature
+			result = CalculateSignature(signingKey, signatureBaseString);
+
 			return result;
+		}
+
+		private static string CalculateSignature(string signingKey, string signatureBaseString)
+		{
+			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(signingKey)))
+			{
+				return Convert.ToBase64String(hasher.ComputeHash(Encoding.ASCII.GetBytes(signatureBaseString)));
+			}
+		}
+
+		private static string GetSigningKey()
+		{
+			//return $"{OAuthProperties.ConsumerKeySecret}&{OAuthProperties.AccessTokenSecret}";
+			return $"{"kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw"}&{"LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE"}";
 		}
 
 		private static string CreateSignatureBaseString(
