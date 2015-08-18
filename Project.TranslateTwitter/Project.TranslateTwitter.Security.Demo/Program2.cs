@@ -19,7 +19,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			// 1.) Collecting the request method and URL
 			string httpMethod = "POST";
 			string baseUrl = "https://api.twitter.com/1.1/statuses/user_timeline.json";
-			httpMethod = "GET";
+			httpMethod = "POST";
 			baseUrl = "https://api.twitter.com/1/statuses/update.json";
 
 			// 2.) Collecting parameters
