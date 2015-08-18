@@ -33,7 +33,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Project.TranslateTwitter.Security.Demo.Program2</StartupObject>
+    <StartupObject>Project.TranslateTwitter.Security.Demo.Program3</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hammock.ClientProfile, Version=1.0.0.0, Culture=neutral, PublicKeyToken=c148cfba29ed1a4d, processorArchitecture=MSIL">

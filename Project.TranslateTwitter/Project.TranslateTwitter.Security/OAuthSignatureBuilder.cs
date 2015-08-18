@@ -21,6 +21,11 @@ namespace Project.TranslateTwitter.Security
 			AuthenticationContext = authenticationContext;
 		}
 
+		public string CreateSignature(string baseString)
+		{
+			return CalculateSignature(GetSigningKey(), baseString);
+		}
+
 		public string CreateSignature(SignatureInput input)
 		{
 			// 3.) Creating the signature base string

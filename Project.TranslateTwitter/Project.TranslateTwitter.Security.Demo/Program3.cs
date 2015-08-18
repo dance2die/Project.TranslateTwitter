@@ -31,30 +31,28 @@ namespace Project.TranslateTwitter.Security.Demo
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
-			var baseFormat = "oauth_consumer_key={0}&oauth_nonce={1}&oauth_signature_method={2}" +
-							 "&oauth_timestamp={3}&oauth_token={4}&oauth_version={5}";
+			var count = 10;
+			var httpMethod = "GET";
+
+			var baseFormat = "count={0}&oauth_consumer_key={1}&oauth_nonce={2}&oauth_signature_method={3}" +
+							 "&oauth_timestamp={4}&oauth_token={5}&oauth_version={6}&screen_name={7}";
 
 			var baseString = string.Format(baseFormat,
+				count,
 				oauth_consumer_key,
 				oauth_nonce,
 				oauth_signature_method,
 				oauth_timestamp,
 				oauth_token,
-				oauth_version
+				oauth_version,
+				screenName
 			);
 
-			baseString = string.Concat("POST&", Uri.EscapeDataString(resource_url),
+            baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(resource_url),
 				"&", Uri.EscapeDataString(baseString));
 
-			var compositeKey = string.Concat(Uri.EscapeDataString(oauth_consumer_secret),
-				"&", Uri.EscapeDataString(oauth_token_secret));
-
-			string oauth_signature;
-			using (HMACSHA1 hasher = new HMACSHA1(Encoding.ASCII.GetBytes(compositeKey)))
-			{
-				oauth_signature = Convert.ToBase64String(
-					hasher.ComputeHash(Encoding.ASCII.GetBytes(baseString)));
-			}
+			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(new AuthenticationContext());
+			string oauth_signature = signatureBuilder.CreateSignature(baseString);
 
 			var headerFormat =
 				"OAuth oauth_nonce=\"{0}\", oauth_signature_method=\"{1}\", " +
@@ -72,13 +70,11 @@ namespace Project.TranslateTwitter.Security.Demo
 				Uri.EscapeDataString(oauth_version)
 				);
 
-
-
 			ServicePointManager.Expect100Continue = false;
 
 			var request = (HttpWebRequest)WebRequest.Create(resource_url);
 			request.Headers.Add("Authorization", authHeader);
-			request.Method = "POST";
+			request.Method = httpMethod;
 			request.ContentType = "application/x-www-form-urlencoded";
 
 			//return request;
