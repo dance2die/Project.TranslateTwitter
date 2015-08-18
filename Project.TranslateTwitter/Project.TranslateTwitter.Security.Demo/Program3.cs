@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -18,6 +19,20 @@ namespace Project.TranslateTwitter.Security.Demo
 		}
 
 		private static void TestUserTimeLine(string screenName)
+		{
+			var request = GetUserTimelineRequest(screenName);
+
+            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			using (Stream dataStream = response.GetResponseStream())
+			{
+				//Open the stream using a StreamReader for easy access.
+				StreamReader reader = new StreamReader(dataStream);
+				//Read the content.
+				string responseFromServer = reader.ReadToEnd();
+			}
+		}
+
+		private static HttpWebRequest GetUserTimelineRequest(string screenName)
 		{
 			var oauth_token = OAuthProperties.AccessToken;
 			var oauth_token_secret = OAuthProperties.AccessTokenSecret;
@@ -77,7 +92,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			request.Method = httpMethod;
 			request.ContentType = "application/x-www-form-urlencoded";
 
-			//return request;
+			return request;
 		}
 	}
 }
