@@ -40,7 +40,7 @@ namespace Project.TranslateTwitter.Security
 			return result;
 		}
 
-		private string GetSignatureBaseString(SignatureInput input)
+		public string GetSignatureBaseString(SignatureInput input)
 		{
 			const string separator = "&";
 

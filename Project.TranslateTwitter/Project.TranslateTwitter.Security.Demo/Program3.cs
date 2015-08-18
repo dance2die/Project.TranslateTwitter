@@ -67,15 +67,21 @@ namespace Project.TranslateTwitter.Security.Demo
 				screenName
 			);
 
-            baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(resource_url),
-				"&", Uri.EscapeDataString(baseString));
 
 			var authenticationContext = new AuthenticationContext();
 			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext) {ScreenName = screenName};
 			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
 
+			baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(queryUrl),
+				"&", Uri.EscapeDataString(baseString));
+
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
+			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters));
+			baseString = bstring;
+
+
 			string oauth_signature = signatureBuilder.CreateSignature(baseString);
+
 
 			var headerFormat =
 				"OAuth oauth_nonce=\"{0}\", oauth_signature_method=\"{1}\", " +
@@ -138,17 +144,30 @@ namespace Project.TranslateTwitter.Security.Demo
 
 	public class TimelineRequestParameters
 	{
+		private const string SCREEN_NAME = "screen_name";
+		private const string COUNT = "count";
+
 		public Dictionary<string, string> Parameters { get; }
 		public IAuthenticationContext AuthenticationContext { get; }
-		public string ScreenName { get; set; }
-		public int Count { get; set; }
-		
+
+		public string ScreenName
+		{
+			get { return Parameters[SCREEN_NAME]; }
+			set { Parameters[SCREEN_NAME] = value; }
+		}
+
+		public string Count
+		{
+			get { return Parameters[COUNT]; }
+			set { Parameters[COUNT] = value; }
+		}
+
 		public TimelineRequestParameters(IAuthenticationContext authenticationContext)
 		{
 			AuthenticationContext = authenticationContext;
 			Parameters = GetCommonParameters();
 
-			Count = 5;
+			Count = "5";
 		}
 
 		private Dictionary<string, string> GetCommonParameters()
@@ -187,8 +206,8 @@ namespace Project.TranslateTwitter.Security.Demo
 			var uriBuilder = new UriBuilder(apiUrl);
 
 			NameValueCollection query = new NameValueCollection();
-			query["screen_name"] = ScreenName;
-			query["count"] = Count.ToString(CultureInfo.InvariantCulture);
+			query[SCREEN_NAME] = ScreenName;
+			query[COUNT] = Count.ToString(CultureInfo.InvariantCulture);
 
 			var queryString = GetQueryString(query);
 			uriBuilder.Query = HttpUtility.UrlDecode(queryString);
