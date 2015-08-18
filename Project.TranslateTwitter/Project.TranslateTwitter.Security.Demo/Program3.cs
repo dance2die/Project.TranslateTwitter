@@ -76,7 +76,7 @@ namespace Project.TranslateTwitter.Security.Demo
 				"&", Uri.EscapeDataString(baseString));
 
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
-			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters));
+			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, resource_url, requestParameters.Parameters));
 			baseString = bstring;
 
 
@@ -84,18 +84,22 @@ namespace Project.TranslateTwitter.Security.Demo
 
 
 			var headerFormat =
-				"OAuth oauth_nonce=\"{0}\", oauth_signature_method=\"{1}\", " +
-				"oauth_timestamp=\"{2}\", oauth_consumer_key=\"{3}\", " +
-				"oauth_token=\"{4}\", oauth_signature=\"{5}\", " +
+				"OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " + 
+				"oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " +
+				"oauth_timestamp=\"{4}\", , " +
+				"oauth_token=\"{5}\", " +
 				"oauth_version=\"{6}\"";
 
-			var authHeader = string.Format(headerFormat,
+			//oauth_nonce = "4339355b1dd5c6fcb025ccebe6d50f67";
+			//oauth_timestamp = "1439914884";
+
+            var authHeader = string.Format(headerFormat,
+				Uri.EscapeDataString(oauth_consumer_key),
 				Uri.EscapeDataString(oauth_nonce),
+				Uri.EscapeDataString(oauth_signature),
 				Uri.EscapeDataString(oauth_signature_method),
 				Uri.EscapeDataString(oauth_timestamp),
-				Uri.EscapeDataString(oauth_consumer_key),
 				Uri.EscapeDataString(oauth_token),
-				Uri.EscapeDataString(oauth_signature),
 				Uri.EscapeDataString(oauth_version)
 				);
 
@@ -175,9 +179,12 @@ namespace Project.TranslateTwitter.Security.Demo
 			var oauth_consumer_key = AuthenticationContext.ConsumerKey;
 			var oauth_signature_method = "HMAC-SHA1";
 			var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
-			var oauth_timestamp = GetTimeStamp();
+            var oauth_timestamp = GetTimeStamp();
 			var oauth_token = AuthenticationContext.AccessToken;
 			var oauth_version = "1.0";
+
+			//oauth_nonce = "4339355b1dd5c6fcb025ccebe6d50f67";
+			//oauth_timestamp = "1439914884";
 
 			return new Dictionary<string, string>
 			{
