@@ -110,8 +110,6 @@ namespace Project.TranslateTwitter.Security.Demo
 			result.Append(separator);
 
 			// 5.) Percent encode the parameter string and append it to the output string.
-			// According to Twitter spec,
-			// Sort the list of parameters alphabetically[1] by encoded key[2].
 			var baseString = GetParameterString(requestParams, separator);
 			result.Append(Uri.EscapeDataString(baseString));
 
@@ -121,7 +119,9 @@ namespace Project.TranslateTwitter.Security.Demo
 		private static string GetParameterString(IDictionary<string, string> requestParams, string separator)
 		{
 			var query = (from requestParam in requestParams
-						orderby requestParam.Key
+						// According to Twitter spec,
+						// Sort the list of parameters alphabetically[1] by encoded key[2].
+						 orderby requestParam.Key
 						select new {requestParam.Key, requestParam.Value}).ToList();
 
 			List<string> paramList = new List<string>(query.Count);
