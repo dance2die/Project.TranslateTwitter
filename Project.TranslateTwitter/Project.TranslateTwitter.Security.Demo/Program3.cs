@@ -81,7 +81,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			request.Method = "POST";
 			request.ContentType = "application/x-www-form-urlencoded";
 
-			return request;
+			//return request;
 		}
 	}
 }
