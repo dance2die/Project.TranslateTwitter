@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Compat.Web;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,7 +70,11 @@ namespace Project.TranslateTwitter.Security.Demo
             baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(resource_url),
 				"&", Uri.EscapeDataString(baseString));
 
-			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(new AuthenticationContext());
+			var authenticationContext = new AuthenticationContext();
+			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext) {ScreenName = screenName};
+			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
+
+			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			string oauth_signature = signatureBuilder.CreateSignature(baseString);
 
 			var headerFormat =
@@ -87,12 +95,115 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			ServicePointManager.Expect100Continue = false;
 
-			var request = (HttpWebRequest)WebRequest.Create(resource_url);
+			var request = (HttpWebRequest)WebRequest.Create(queryUrl);
 			request.Headers.Add("Authorization", authHeader);
 			request.Method = httpMethod;
 			request.ContentType = "application/x-www-form-urlencoded";
 
 			return request;
+		}
+
+		private static Dictionary<string, string> GetRequestParams()
+		{
+			var oauth_consumer_key = OAuthProperties.ConsumerKey;
+			var oauth_signature_method = "HMAC-SHA1";
+			var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+			var oauth_timestamp = GetTimeStamp();
+			var oauth_token = OAuthProperties.AccessToken;
+			var oauth_version = "1.0";
+
+			Dictionary<string, string> parameters = new Dictionary<string, string>
+			{
+				{"oauth_consumer_key", oauth_consumer_key },
+				{"oauth_nonce", oauth_nonce },
+				{"oauth_signature_method", oauth_signature_method },
+				{"oauth_timestamp", oauth_timestamp },
+				{"oauth_token", oauth_token },
+				{"oauth_version", oauth_version },
+			};
+
+			// According to Twitter spec,
+			// Sort the list of parameters alphabetically[1] by encoded key[2].
+			//return parameters.OrderBy(pair => pair.Key).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+			return parameters;
+		}
+
+		private static string GetTimeStamp()
+		{
+			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+		}
+	}
+
+	public class TimelineRequestParameters
+	{
+		public Dictionary<string, string> Parameters { get; }
+		public IAuthenticationContext AuthenticationContext { get; }
+		public string ScreenName { get; set; }
+		public int Count { get; set; }
+		
+		public TimelineRequestParameters(IAuthenticationContext authenticationContext)
+		{
+			AuthenticationContext = authenticationContext;
+			Parameters = GetCommonParameters();
+
+			Count = 5;
+		}
+
+		private Dictionary<string, string> GetCommonParameters()
+		{
+			var oauth_consumer_key = AuthenticationContext.ConsumerKey;
+			var oauth_signature_method = "HMAC-SHA1";
+			var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+			var oauth_timestamp = GetTimeStamp();
+			var oauth_token = AuthenticationContext.AccessToken;
+			var oauth_version = "1.0";
+
+			return new Dictionary<string, string>
+			{
+				{"oauth_consumer_key", oauth_consumer_key },
+				{"oauth_nonce", oauth_nonce },
+				{"oauth_signature_method", oauth_signature_method },
+				{"oauth_timestamp", oauth_timestamp },
+				{"oauth_token", oauth_token },
+				{"oauth_version", oauth_version },
+			};
+		}
+
+		private string GetTimeStamp()
+		{
+			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="apiUrl">Twitter API URL</param>
+		/// <returns></returns>
+		public string BuildRequestUrl(string apiUrl)
+		{
+			var uriBuilder = new UriBuilder(apiUrl);
+
+			NameValueCollection query = new NameValueCollection();
+			query["screen_name"] = ScreenName;
+			query["count"] = Count.ToString(CultureInfo.InvariantCulture);
+
+			var queryString = GetQueryString(query);
+			uriBuilder.Query = HttpUtility.UrlDecode(queryString);
+
+			return uriBuilder.ToString();
+		}
+
+		private string GetQueryString(NameValueCollection query)
+		{
+			var array = (from key in query.AllKeys
+						 from value in query.GetValues(key)
+						 orderby key
+						 where !string.IsNullOrWhiteSpace(value)
+						 select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+			return string.Join("&", array);
 		}
 	}
 }
