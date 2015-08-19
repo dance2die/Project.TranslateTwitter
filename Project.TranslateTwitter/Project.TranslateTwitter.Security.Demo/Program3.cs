@@ -68,6 +68,10 @@ namespace Project.TranslateTwitter.Security.Demo
 			);
 
 
+			//oauth_nonce = "084ac3305ffe7e8022744f7a7a07db17";
+			//oauth_timestamp = "1440010872";
+
+
 			var authenticationContext = new AuthenticationContext();
 			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext) {ScreenName = screenName};
 			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
@@ -86,7 +90,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			var headerFormat =
 				"OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " + 
 				"oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " +
-				"oauth_timestamp=\"{4}\", , " +
+				"oauth_timestamp=\"{4}\", " +
 				"oauth_token=\"{5}\", " +
 				"oauth_version=\"{6}\"";
 
@@ -189,9 +193,11 @@ namespace Project.TranslateTwitter.Security.Demo
 			return new Dictionary<string, string>
 			{
 				{"oauth_consumer_key", oauth_consumer_key },
+				//{"oauth_nonce", "084ac3305ffe7e8022744f7a7a07db17" },
 				{"oauth_nonce", oauth_nonce },
 				{"oauth_signature_method", oauth_signature_method },
 				{"oauth_timestamp", oauth_timestamp },
+				//{"oauth_timestamp", "1440010872" },
 				{"oauth_token", oauth_token },
 				{"oauth_version", oauth_version },
 			};
