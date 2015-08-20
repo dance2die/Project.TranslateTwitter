@@ -80,7 +80,8 @@ namespace Project.TranslateTwitter.Security.Demo
 				"&", Uri.EscapeDataString(baseString));
 
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
-			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, resource_url, requestParameters.Parameters));
+			//var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, resource_url, requestParameters.Parameters));
+			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters));
 			baseString = bstring;
 
 
