@@ -45,9 +45,9 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			var oauth_version = "1.0";
 			var oauth_signature_method = "HMAC-SHA1";
-			var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
-			var timeSpan = DateTime.UtcNow- new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+			//var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
+			//var timeSpan = DateTime.UtcNow- new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+			//var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
 			var count = 5;
@@ -78,8 +78,8 @@ namespace Project.TranslateTwitter.Security.Demo
 			{
 				ScreenName = screenName,
 				Count = count.ToString(),
-				OAuthNonce = oauth_nonce,
-				OAuthTimestamp = oauth_timestamp
+				//OAuthNonce = oauth_nonce,
+				//OAuthTimestamp = oauth_timestamp
 			};
 			
 			
@@ -107,10 +107,12 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			var authHeader = string.Format(headerFormat,
 				Uri.EscapeDataString(oauth_consumer_key),
-				Uri.EscapeDataString(oauth_nonce),
+				//Uri.EscapeDataString(oauth_nonce),
+				Uri.EscapeDataString(requestParameters.OAuthNonce),
 				Uri.EscapeDataString(oauth_signature),
 				Uri.EscapeDataString(oauth_signature_method),
-				Uri.EscapeDataString(oauth_timestamp),
+				//Uri.EscapeDataString(oauth_timestamp),
+				Uri.EscapeDataString(requestParameters.OAuthTimestamp),
 				Uri.EscapeDataString(oauth_token),
 				Uri.EscapeDataString(oauth_version)
 				);
