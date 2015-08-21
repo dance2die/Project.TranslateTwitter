@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Compat.Web;
+using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -10,6 +11,8 @@ using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Project.TranslateTwitter.Security.Demo
 {
@@ -33,6 +36,8 @@ namespace Project.TranslateTwitter.Security.Demo
 				StreamReader reader = new StreamReader(dataStream);
 				//Read the content.
 				string responseFromServer = reader.ReadToEnd();
+				//dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(responseFromServer);
+				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(responseFromServer, new ExpandoObjectConverter());
 			}
 		}
 
