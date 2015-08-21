@@ -50,22 +50,22 @@ namespace Project.TranslateTwitter.Security.Demo
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
-			var count = 10;
+			//var count = 5;
 			var httpMethod = "GET";
 
-			var baseFormat = "count={0}&oauth_consumer_key={1}&oauth_nonce={2}&oauth_signature_method={3}" +
-							 "&oauth_timestamp={4}&oauth_token={5}&oauth_version={6}&screen_name={7}";
+			//var baseFormat = "count={0}&oauth_consumer_key={1}&oauth_nonce={2}&oauth_signature_method={3}" +
+			//				 "&oauth_timestamp={4}&oauth_token={5}&oauth_version={6}&screen_name={7}";
 
-			var baseString = string.Format(baseFormat,
-				count,
-				oauth_consumer_key,
-				oauth_nonce,
-				oauth_signature_method,
-				oauth_timestamp,
-				oauth_token,
-				oauth_version,
-				screenName
-			);
+			//var baseString = string.Format(baseFormat,
+			//	count,
+			//	oauth_consumer_key,
+			//	oauth_nonce,
+			//	oauth_signature_method,
+			//	oauth_timestamp,
+			//	oauth_token,
+			//	oauth_version,
+			//	screenName
+			//);
 
 
 			//oauth_nonce = "084ac3305ffe7e8022744f7a7a07db17";
@@ -74,18 +74,20 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			var authenticationContext = new AuthenticationContext();
 			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext) {ScreenName = screenName};
-			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
-
-			baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(queryUrl),
-				"&", Uri.EscapeDataString(baseString));
+			
+			
+			//baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(queryUrl), "&", Uri.EscapeDataString(baseString));
 
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			//var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, resource_url, requestParameters.Parameters));
-			var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters));
-			baseString = bstring;
+			//var signatureInput = new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters);
+			var signatureInput = new SignatureInput(httpMethod, resource_url, requestParameters.Parameters);
+			var bstring = signatureBuilder.GetSignatureBaseString(signatureInput);
+			//baseString = bstring;
 
 
-			string oauth_signature = signatureBuilder.CreateSignature(baseString);
+			//string oauth_signature = signatureBuilder.CreateSignature(baseString);
+			string oauth_signature = signatureBuilder.CreateSignature(signatureInput);
 
 
 			var headerFormat =
@@ -110,6 +112,7 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			ServicePointManager.Expect100Continue = false;
 
+			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
 			var request = (HttpWebRequest)WebRequest.Create(queryUrl);
 			request.Headers.Add("Authorization", authHeader);
 			request.Method = httpMethod;
@@ -217,16 +220,18 @@ namespace Project.TranslateTwitter.Security.Demo
 		/// <returns></returns>
 		public string BuildRequestUrl(string apiUrl)
 		{
-			var uriBuilder = new UriBuilder(apiUrl);
+			//var uriBuilder = new UriBuilder(apiUrl);
 
-			NameValueCollection query = new NameValueCollection();
-			query[SCREEN_NAME] = ScreenName;
-			query[COUNT] = Count.ToString(CultureInfo.InvariantCulture);
+			NameValueCollection query = new NameValueCollection
+			{
+				[SCREEN_NAME] = ScreenName,
+				[COUNT] = Count.ToString(CultureInfo.InvariantCulture)
+			};
 
 			var queryString = GetQueryString(query);
-			uriBuilder.Query = HttpUtility.UrlDecode(queryString);
+			var result = $"{apiUrl}?{HttpUtility.UrlDecode(queryString)}";
 
-			return uriBuilder.ToString();
+			return result;
 		}
 
 		private string GetQueryString(NameValueCollection query)
