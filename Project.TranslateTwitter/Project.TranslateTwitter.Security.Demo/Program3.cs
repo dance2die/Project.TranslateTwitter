@@ -50,7 +50,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			var oauth_timestamp = Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 			var resource_url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
-			//var count = 5;
+			var count = 5;
 			var httpMethod = "GET";
 
 			//var baseFormat = "count={0}&oauth_consumer_key={1}&oauth_nonce={2}&oauth_signature_method={3}" +
@@ -68,12 +68,19 @@ namespace Project.TranslateTwitter.Security.Demo
 			//);
 
 
-			//oauth_nonce = "084ac3305ffe7e8022744f7a7a07db17";
-			//oauth_timestamp = "1440010872";
+			//oauth_nonce = "ed2e216240c5da8e6e6e9bfb21260323";
+			//oauth_timestamp = "1440180541";
+
 
 
 			var authenticationContext = new AuthenticationContext();
-			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext) {ScreenName = screenName};
+			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
+			{
+				ScreenName = screenName,
+				Count = count.ToString(),
+				OAuthNonce = oauth_nonce,
+				OAuthTimestamp = oauth_timestamp
+			};
 			
 			
 			//baseString = string.Concat(httpMethod + "&", Uri.EscapeDataString(queryUrl), "&", Uri.EscapeDataString(baseString));
@@ -82,7 +89,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			//var bstring = signatureBuilder.GetSignatureBaseString(new SignatureInput(httpMethod, resource_url, requestParameters.Parameters));
 			//var signatureInput = new SignatureInput(httpMethod, queryUrl, requestParameters.Parameters);
 			var signatureInput = new SignatureInput(httpMethod, resource_url, requestParameters.Parameters);
-			var bstring = signatureBuilder.GetSignatureBaseString(signatureInput);
+			//var bstring = signatureBuilder.GetSignatureBaseString(signatureInput);
 			//baseString = bstring;
 
 
@@ -97,10 +104,8 @@ namespace Project.TranslateTwitter.Security.Demo
 				"oauth_token=\"{5}\", " +
 				"oauth_version=\"{6}\"";
 
-			//oauth_nonce = "4339355b1dd5c6fcb025ccebe6d50f67";
-			//oauth_timestamp = "1439914884";
 
-            var authHeader = string.Format(headerFormat,
+			var authHeader = string.Format(headerFormat,
 				Uri.EscapeDataString(oauth_consumer_key),
 				Uri.EscapeDataString(oauth_nonce),
 				Uri.EscapeDataString(oauth_signature),
@@ -158,6 +163,8 @@ namespace Project.TranslateTwitter.Security.Demo
 	{
 		private const string SCREEN_NAME = "screen_name";
 		private const string COUNT = "count";
+		private const string OAUTH_NONCE = "oauth_nonce";
+		private const string OAUTH_TIMESTAMP = "oauth_timestamp";
 
 		public Dictionary<string, string> Parameters { get; }
 		public IAuthenticationContext AuthenticationContext { get; }
@@ -173,6 +180,19 @@ namespace Project.TranslateTwitter.Security.Demo
 			get { return Parameters[COUNT]; }
 			set { Parameters[COUNT] = value; }
 		}
+
+		public string OAuthNonce
+		{
+			get { return Parameters[OAUTH_NONCE]; }
+			set { Parameters[OAUTH_NONCE] = value; }
+		}
+
+		public string OAuthTimestamp
+		{
+			get { return Parameters[OAUTH_TIMESTAMP]; }
+			set { Parameters[OAUTH_TIMESTAMP] = value; }
+		}
+
 
 		public TimelineRequestParameters(IAuthenticationContext authenticationContext)
 		{
