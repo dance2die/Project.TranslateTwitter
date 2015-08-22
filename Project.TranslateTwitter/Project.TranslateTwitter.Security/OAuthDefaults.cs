@@ -1,4 +1,4 @@
-namespace Project.TranslateTwitter.Core
+namespace Project.TranslateTwitter.Security
 {
 	public class OAuthDefaults
 	{

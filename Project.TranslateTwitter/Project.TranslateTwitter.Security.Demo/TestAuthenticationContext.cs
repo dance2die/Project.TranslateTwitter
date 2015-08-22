@@ -1,5 +1,3 @@
-using Project.TranslateTwitter.Core;
-
 namespace Project.TranslateTwitter.Security.Demo
 {
 	/// <summary>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Project.TranslateTwitter.Core
+namespace Project.TranslateTwitter.Security
 {
 	public abstract class RequestParameters
 	{

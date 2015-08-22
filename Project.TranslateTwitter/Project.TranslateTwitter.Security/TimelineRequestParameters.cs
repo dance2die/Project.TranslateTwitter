@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Web;
 
-namespace Project.TranslateTwitter.Core
+namespace Project.TranslateTwitter.Security
 {
 	public class TimelineRequestParameters : RequestParameters
 	{

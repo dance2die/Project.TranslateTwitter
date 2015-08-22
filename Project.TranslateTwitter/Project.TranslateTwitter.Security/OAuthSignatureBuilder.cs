@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using Project.TranslateTwitter.Core;
 
 namespace Project.TranslateTwitter.Security
 {
