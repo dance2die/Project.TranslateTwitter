@@ -44,6 +44,7 @@
     <Compile Include="AuthenticationContext.cs" />
     <Compile Include="IAuthenticationContext.cs" />
     <Compile Include="OAuthDefaults.cs" />
+    <Compile Include="OAuthHeaderBuilder.cs" />
     <Compile Include="OAuthProperties.cs" />
     <Compile Include="OAuthSignatureBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

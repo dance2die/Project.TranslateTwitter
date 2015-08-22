@@ -107,7 +107,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OAuthHeaderBuilder.cs" />
     <Compile Include="OAuthProperties.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Program2.cs" />

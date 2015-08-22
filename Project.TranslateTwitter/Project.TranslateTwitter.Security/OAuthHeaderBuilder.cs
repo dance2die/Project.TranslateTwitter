@@ -1,6 +1,6 @@
 using System;
 
-namespace Project.TranslateTwitter.Security.Demo
+namespace Project.TranslateTwitter.Security
 {
 	public class OAuthHeaderBuilder
 	{
@@ -23,7 +23,7 @@ namespace Project.TranslateTwitter.Security.Demo
 				"oauth_token=\"{5}\", " +
 				"oauth_version=\"{6}\"";
 
-			var result = String.Format(headerFormat,
+			var result = string.Format(headerFormat,
 				Uri.EscapeDataString(AuthenticationContext.ConsumerKey),
 				Uri.EscapeDataString(requestParameters.OAuthNonce),
 				Uri.EscapeDataString(oauthSignature),
