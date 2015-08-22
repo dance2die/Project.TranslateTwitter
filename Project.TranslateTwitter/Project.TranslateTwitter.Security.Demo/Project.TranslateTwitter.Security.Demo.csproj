@@ -119,10 +119,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Project.TranslateTwitter.Common\Project.TranslateTwitter.Core.csproj">
-      <Project>{28e18f65-7e20-4b6c-a219-5f05598ace63}</Project>
-      <Name>Project.TranslateTwitter.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Project.TranslateTwitter.Security\Project.TranslateTwitter.Security.csproj">
       <Project>{975c53cf-66d1-412d-97f9-979edfe83f0b}</Project>
       <Name>Project.TranslateTwitter.Security</Name>
