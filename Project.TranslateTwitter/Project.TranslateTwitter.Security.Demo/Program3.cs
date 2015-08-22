@@ -44,9 +44,6 @@ namespace Project.TranslateTwitter.Security.Demo
 		private static HttpWebRequest GetUserTimelineRequest(
 			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
 		{
-			var oauthVersion = "1.0";
-			var oauthSignatureMethod = "HMAC-SHA1";
-
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
 
@@ -62,10 +59,10 @@ namespace Project.TranslateTwitter.Security.Demo
 				Uri.EscapeDataString(authenticationContext.ConsumerKey),
 				Uri.EscapeDataString(requestParameters.OAuthNonce),
 				Uri.EscapeDataString(oauthSignature),
-				Uri.EscapeDataString(oauthSignatureMethod),
+				Uri.EscapeDataString(OAuthDefaults.SignatureMethod),
 				Uri.EscapeDataString(requestParameters.OAuthTimestamp),
 				Uri.EscapeDataString(authenticationContext.AccessToken),
-				Uri.EscapeDataString(oauthVersion)
+				Uri.EscapeDataString(OAuthDefaults.Version)
 				);
 
 			ServicePointManager.Expect100Continue = false;
