@@ -18,16 +18,7 @@ namespace Project.TranslateTwitter.Security.Demo
 
 		private static void TestUserTimeLine(string screenName)
 		{
-			var count = 5;
-			var authenticationContext = new AuthenticationContext();
-			RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
-			{
-				ScreenName = screenName,
-				Count = count.ToString(),
-			};
-
-			var requestBuilder = new RequestBuilder(authenticationContext);
-			var request = requestBuilder.GetRequest(requestParameters);
+			var request = GetRequest(new AuthenticationContext(), screenName);
 
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -39,6 +30,18 @@ namespace Project.TranslateTwitter.Security.Demo
 				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
 					responseFromServer, new ExpandoObjectConverter());
 			}
+		}
+
+		private static HttpWebRequest GetRequest(AuthenticationContext authenticationContext, string screenName)
+		{
+			var requestBuilder = new RequestBuilder(authenticationContext);
+			var requestParameters = new TimelineRequestParameters(authenticationContext)
+			{
+				ScreenName = screenName,
+				Count = "10",
+			};
+
+			return requestBuilder.GetRequest(requestParameters);
 		}
 	}
 }
