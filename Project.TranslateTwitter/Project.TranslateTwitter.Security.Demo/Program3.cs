@@ -18,7 +18,7 @@ namespace Project.TranslateTwitter.Security.Demo
 
 		private static void TestUserTimeLine(string screenName)
 		{
-			var request = GetRequest(new AuthenticationContext(), screenName);
+			var request = GetTimelineRequest(new AuthenticationContext(), screenName);
 
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -32,7 +32,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			}
 		}
 
-		private static HttpWebRequest GetRequest(AuthenticationContext authenticationContext, string screenName)
+		private static HttpWebRequest GetTimelineRequest(AuthenticationContext authenticationContext, string screenName)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
 			var requestParameters = new TimelineRequestParameters(authenticationContext)
