@@ -20,7 +20,14 @@ namespace Project.TranslateTwitter.Security.Demo
 
 		private static void TestUserTimeLine(string screenName)
 		{
-			var request = GetUserTimelineRequest(screenName);
+			var count = 5;
+			var authenticationContext = new AuthenticationContext();
+			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
+			{
+				ScreenName = screenName,
+				Count = count.ToString(),
+			};
+			var request = GetUserTimelineRequest(authenticationContext, requestParameters);
 
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -34,18 +41,11 @@ namespace Project.TranslateTwitter.Security.Demo
 			}
 		}
 
-		private static HttpWebRequest GetUserTimelineRequest(string screenName)
+		private static HttpWebRequest GetUserTimelineRequest(
+			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
 		{
 			var oauthVersion = "1.0";
 			var oauthSignatureMethod = "HMAC-SHA1";
-			var count = 5;
-
-			var authenticationContext = new AuthenticationContext();
-			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
-			{
-				ScreenName = screenName,
-				Count = count.ToString(),
-			};
 
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
