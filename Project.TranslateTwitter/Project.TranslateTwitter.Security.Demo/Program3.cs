@@ -44,26 +44,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		private static HttpWebRequest GetUserTimelineRequest(
 			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
 		{
-			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
-			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
-
-			var headerFormat =
-				"OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " +
-				"oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " +
-				"oauth_timestamp=\"{4}\", " +
-				"oauth_token=\"{5}\", " +
-				"oauth_version=\"{6}\"";
-
-
-			var authHeader = string.Format(headerFormat,
-				Uri.EscapeDataString(authenticationContext.ConsumerKey),
-				Uri.EscapeDataString(requestParameters.OAuthNonce),
-				Uri.EscapeDataString(oauthSignature),
-				Uri.EscapeDataString(OAuthDefaults.SignatureMethod),
-				Uri.EscapeDataString(requestParameters.OAuthTimestamp),
-				Uri.EscapeDataString(authenticationContext.AccessToken),
-				Uri.EscapeDataString(OAuthDefaults.Version)
-				);
+			var authHeader = BuildAuthHeader(authenticationContext, requestParameters);
 
 			ServicePointManager.Expect100Continue = false;
 
@@ -74,6 +55,32 @@ namespace Project.TranslateTwitter.Security.Demo
 			request.ContentType = "application/x-www-form-urlencoded";
 
 			return request;
+		}
+
+		private static string BuildAuthHeader(
+			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
+		{
+			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
+			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
+
+			var headerFormat =
+				"OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " +
+				"oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " +
+				"oauth_timestamp=\"{4}\", " +
+				"oauth_token=\"{5}\", " +
+				"oauth_version=\"{6}\"";
+
+			var result = string.Format(headerFormat,
+				Uri.EscapeDataString(authenticationContext.ConsumerKey),
+				Uri.EscapeDataString(requestParameters.OAuthNonce),
+				Uri.EscapeDataString(oauthSignature),
+				Uri.EscapeDataString(OAuthDefaults.SignatureMethod),
+				Uri.EscapeDataString(requestParameters.OAuthTimestamp),
+				Uri.EscapeDataString(authenticationContext.AccessToken),
+				Uri.EscapeDataString(OAuthDefaults.Version)
+				);
+
+			return result;
 		}
 	}
 }
