@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Compat.Web;
 using System.Dynamic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Project.TranslateTwitter.Core;
 
 namespace Project.TranslateTwitter.Security.Demo
 {
@@ -47,10 +44,8 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			var oauth_version = "1.0";
 			var oauth_signature_method = "HMAC-SHA1";
-			var resource_url = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 
 			var count = 5;
-			var httpMethod = "GET";
 
 			var authenticationContext = new AuthenticationContext();
 			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
@@ -63,8 +58,7 @@ namespace Project.TranslateTwitter.Security.Demo
 			
 
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
-			var signatureInput = new SignatureInput(httpMethod, resource_url, requestParameters.Parameters);
-			string oauth_signature = signatureBuilder.CreateSignature(signatureInput);
+			string oauth_signature = signatureBuilder.CreateSignature(requestParameters);
 
 
 			var headerFormat =
@@ -87,10 +81,10 @@ namespace Project.TranslateTwitter.Security.Demo
 
 			ServicePointManager.Expect100Continue = false;
 
-			var queryUrl = requestParameters.BuildRequestUrl(resource_url);
+			var queryUrl = requestParameters.BuildRequestUrl(requestParameters.ResourceUrl);
 			var request = (HttpWebRequest)WebRequest.Create(queryUrl);
 			request.Headers.Add("Authorization", authHeader);
-			request.Method = httpMethod;
+			request.Method = requestParameters.HttpMethod;
 			request.ContentType = "application/x-www-form-urlencoded";
 
 			return request;
@@ -126,112 +120,6 @@ namespace Project.TranslateTwitter.Security.Demo
 		{
 			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-		}
-	}
-
-	public class TimelineRequestParameters
-	{
-		private const string SCREEN_NAME = "screen_name";
-		private const string COUNT = "count";
-		private const string OAUTH_NONCE = "oauth_nonce";
-		private const string OAUTH_TIMESTAMP = "oauth_timestamp";
-
-		public Dictionary<string, string> Parameters { get; }
-		public IAuthenticationContext AuthenticationContext { get; }
-
-		public string ScreenName
-		{
-			get { return Parameters[SCREEN_NAME]; }
-			set { Parameters[SCREEN_NAME] = value; }
-		}
-
-		public string Count
-		{
-			get { return Parameters[COUNT]; }
-			set { Parameters[COUNT] = value; }
-		}
-
-		public string OAuthNonce
-		{
-			get { return Parameters[OAUTH_NONCE]; }
-			set { Parameters[OAUTH_NONCE] = value; }
-		}
-
-		public string OAuthTimestamp
-		{
-			get { return Parameters[OAUTH_TIMESTAMP]; }
-			set { Parameters[OAUTH_TIMESTAMP] = value; }
-		}
-
-
-		public TimelineRequestParameters(IAuthenticationContext authenticationContext)
-		{
-			AuthenticationContext = authenticationContext;
-			Parameters = GetCommonParameters();
-
-			Count = "5";
-		}
-
-		private Dictionary<string, string> GetCommonParameters()
-		{
-			var oauth_consumer_key = AuthenticationContext.ConsumerKey;
-			var oauth_signature_method = "HMAC-SHA1";
-			var oauth_nonce = Convert.ToBase64String(new ASCIIEncoding().GetBytes(DateTime.Now.Ticks.ToString()));
-            var oauth_timestamp = GetTimeStamp();
-			var oauth_token = AuthenticationContext.AccessToken;
-			var oauth_version = "1.0";
-
-			//oauth_nonce = "4339355b1dd5c6fcb025ccebe6d50f67";
-			//oauth_timestamp = "1439914884";
-
-			return new Dictionary<string, string>
-			{
-				{"oauth_consumer_key", oauth_consumer_key },
-				//{"oauth_nonce", "084ac3305ffe7e8022744f7a7a07db17" },
-				{"oauth_nonce", oauth_nonce },
-				{"oauth_signature_method", oauth_signature_method },
-				{"oauth_timestamp", oauth_timestamp },
-				//{"oauth_timestamp", "1440010872" },
-				{"oauth_token", oauth_token },
-				{"oauth_version", oauth_version },
-			};
-		}
-
-		private string GetTimeStamp()
-		{
-			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="apiUrl">Twitter API URL</param>
-		/// <returns></returns>
-		public string BuildRequestUrl(string apiUrl)
-		{
-			//var uriBuilder = new UriBuilder(apiUrl);
-
-			NameValueCollection query = new NameValueCollection
-			{
-				[SCREEN_NAME] = ScreenName,
-				[COUNT] = Count.ToString(CultureInfo.InvariantCulture)
-			};
-
-			var queryString = GetQueryString(query);
-			var result = $"{apiUrl}?{HttpUtility.UrlDecode(queryString)}";
-
-			return result;
-		}
-
-		private string GetQueryString(NameValueCollection query)
-		{
-			var array = (from key in query.AllKeys
-						 from value in query.GetValues(key)
-						 orderby key
-						 where !string.IsNullOrWhiteSpace(value)
-						 select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
-			return string.Join("&", array);
 		}
 	}
 }

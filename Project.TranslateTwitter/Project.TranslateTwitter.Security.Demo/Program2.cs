@@ -25,9 +25,9 @@ namespace Project.TranslateTwitter.Security.Demo
 			Dictionary<string, string> requestParams = GetRequestParams();
 			requestParams = GetTestRequestParams();
 
-			var signatureBuilder = new OAuthSignatureBuilder(new TestAuthenticationContext());
-			var signature = signatureBuilder.CreateSignature(new SignatureInput(httpMethod, baseUrl, requestParams));
-			Console.WriteLine("Signature: {0}", signature);
+			//var signatureBuilder = new OAuthSignatureBuilder(new TestAuthenticationContext());
+			//var signature = signatureBuilder.CreateSignature(new SignatureInput(httpMethod, baseUrl, requestParams));
+			//Console.WriteLine("Signature: {0}", signature);
 		}
 
 		private static Dictionary<string, string> GetTestRequestParams()

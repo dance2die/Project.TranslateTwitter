@@ -1,4 +1,4 @@
-namespace Project.TranslateTwitter.Security
+namespace Project.TranslateTwitter.Core
 {
 	public interface IAuthenticationContext
 	{

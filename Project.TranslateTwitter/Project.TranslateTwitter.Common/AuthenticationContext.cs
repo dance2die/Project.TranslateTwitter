@@ -1,6 +1,6 @@
 using System;
 
-namespace Project.TranslateTwitter.Security
+namespace Project.TranslateTwitter.Core
 {
 	public class AuthenticationContext : IAuthenticationContext
 	{

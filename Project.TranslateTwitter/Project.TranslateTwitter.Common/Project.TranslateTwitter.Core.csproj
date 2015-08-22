@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{975C53CF-66D1-412D-97F9-979EDFE83F0B}</ProjectGuid>
+    <ProjectGuid>{28E18F65-7E20-4B6C-A219-5F05598ACE63}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Project.TranslateTwitter.Security</RootNamespace>
-    <AssemblyName>Project.TranslateTwitter.Security</AssemblyName>
+    <RootNamespace>Project.TranslateTwitter.Core</RootNamespace>
+    <AssemblyName>Project.TranslateTwitter.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,16 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OAuthProperties.cs" />
-    <Compile Include="OAuthSignatureBuilder.cs" />
+    <Compile Include="AuthenticationContext.cs" />
+    <Compile Include="IAuthenticationContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SignatureInput.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Project.TranslateTwitter.Common\Project.TranslateTwitter.Core.csproj">
-      <Project>{28e18f65-7e20-4b6c-a219-5f05598ace63}</Project>
-      <Name>Project.TranslateTwitter.Core</Name>
-    </ProjectReference>
+    <Compile Include="TimelineRequestParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using Project.TranslateTwitter.Core;
 
 namespace Project.TranslateTwitter.Security
 {
@@ -26,10 +27,10 @@ namespace Project.TranslateTwitter.Security
 			return CalculateSignature(GetSigningKey(), baseString);
 		}
 
-		public string CreateSignature(SignatureInput input)
+		public string CreateSignature(TimelineRequestParameters parameters)
 		{
 			// 3.) Creating the signature base string
-			string signatureBaseString = GetSignatureBaseString(input);
+			string signatureBaseString = GetSignatureBaseString(parameters);
 
 			// 4.) Getting a signing key
 			string signingKey = GetSigningKey();
@@ -40,34 +41,34 @@ namespace Project.TranslateTwitter.Security
 			return result;
 		}
 
-		public string GetSignatureBaseString(SignatureInput input)
+		public string GetSignatureBaseString(TimelineRequestParameters parameters)
 		{
 			const string separator = "&";
 
 			var result = new StringBuilder();
 
 			// 1.) Convert the HTTP Method to uppercase and set the output string equal to this value.
-			result.Append(input.HttpMethod.ToUpperInvariant());
+			result.Append(parameters.HttpMethod.ToUpperInvariant());
 
 			// 2.) Append the ‘&’ character to the output string.
 			result.Append(separator);
 
 			// 3.) Percent encode the URL and append it to the output string.
-			result.Append(Uri.EscapeDataString(input.BaseUrl));
+			result.Append(Uri.EscapeDataString(parameters.ResourceUrl));
 
 			// 4.) Append the ‘&’ character to the output string.
 			result.Append(separator);
 
 			// 5.) Percent encode the parameter string and append it to the output string.
-			var baseString = GetParameterString(input.RequestParameters, separator);
+			var baseString = GetParameterString(parameters.Parameters, separator);
 			result.Append(Uri.EscapeDataString(baseString));
 
 			return result.ToString();
 		}
 
-		private string GetParameterString(IDictionary<string, string> requestParams, string separator)
+		private string GetParameterString(IDictionary<string, string> requestParameters, string separator)
 		{
-			var query = (from requestParam in requestParams
+			var query = (from requestParam in requestParameters
 							 // According to Twitter spec,
 							 // Sort the list of parameters alphabetically[1] by encoded key[2].
 						 orderby requestParam.Key
