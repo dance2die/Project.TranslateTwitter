@@ -112,7 +112,6 @@
     <Compile Include="Program2.cs" />
     <Compile Include="Program3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RequestBuilder.cs" />
     <Compile Include="TestAuthenticationContext.cs" />
   </ItemGroup>
   <ItemGroup>

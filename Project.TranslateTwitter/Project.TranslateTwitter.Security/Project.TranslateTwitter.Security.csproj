@@ -48,6 +48,7 @@
     <Compile Include="OAuthProperties.cs" />
     <Compile Include="OAuthSignatureBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestBuilder.cs" />
     <Compile Include="RequestParameters.cs" />
     <Compile Include="SignatureInput.cs" />
     <Compile Include="TimelineRequestParameters.cs" />

@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Project.TranslateTwitter.Security.Demo
+namespace Project.TranslateTwitter.Security
 {
 	public class RequestBuilder
 	{
