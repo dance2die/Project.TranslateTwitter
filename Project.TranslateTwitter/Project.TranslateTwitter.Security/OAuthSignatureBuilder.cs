@@ -60,7 +60,7 @@ namespace Project.TranslateTwitter.Security
 			result.Append(separator);
 
 			// 5.) Percent encode the parameter string and append it to the output string.
-			var baseString = GetParameterString(parameters.Parameters, separator);
+			var baseString = GetParameterString(parameters.CommonParameters, separator);
 			result.Append(Uri.EscapeDataString(baseString));
 
 			return result.ToString();
