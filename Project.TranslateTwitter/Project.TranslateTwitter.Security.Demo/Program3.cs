@@ -41,7 +41,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		}
 
 		private static HttpWebRequest GetUserTimelineRequest(
-			AuthenticationContext authenticationContext, RequestParameters requestParameters)
+			IAuthenticationContext authenticationContext, RequestParameters requestParameters)
 		{
 			var authHeader = BuildAuthHeader(authenticationContext, requestParameters);
 
@@ -57,7 +57,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		}
 
 		private static string BuildAuthHeader(
-			AuthenticationContext authenticationContext, RequestParameters requestParameters)
+			IAuthenticationContext authenticationContext, RequestParameters requestParameters)
 		{
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
