@@ -26,7 +26,7 @@ namespace Project.TranslateTwitter.Security
 			return CalculateSignature(GetSigningKey(), baseString);
 		}
 
-		public string CreateSignature(TimelineRequestParameters parameters)
+		public string CreateSignature(RequestParameters parameters)
 		{
 			// 3.) Creating the signature base string
 			string signatureBaseString = GetSignatureBaseString(parameters);
@@ -40,7 +40,7 @@ namespace Project.TranslateTwitter.Security
 			return result;
 		}
 
-		public string GetSignatureBaseString(TimelineRequestParameters parameters)
+		public string GetSignatureBaseString(RequestParameters parameters)
 		{
 			const string separator = "&";
 

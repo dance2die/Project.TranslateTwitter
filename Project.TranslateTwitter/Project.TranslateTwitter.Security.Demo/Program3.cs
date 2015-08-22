@@ -21,7 +21,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		{
 			var count = 5;
 			var authenticationContext = new AuthenticationContext();
-			TimelineRequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
+			RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext)
 			{
 				ScreenName = screenName,
 				Count = count.ToString(),
@@ -41,7 +41,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		}
 
 		private static HttpWebRequest GetUserTimelineRequest(
-			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
+			AuthenticationContext authenticationContext, RequestParameters requestParameters)
 		{
 			var authHeader = BuildAuthHeader(authenticationContext, requestParameters);
 
@@ -57,7 +57,7 @@ namespace Project.TranslateTwitter.Security.Demo
 		}
 
 		private static string BuildAuthHeader(
-			AuthenticationContext authenticationContext, TimelineRequestParameters requestParameters)
+			AuthenticationContext authenticationContext, RequestParameters requestParameters)
 		{
 			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(authenticationContext);
 			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
