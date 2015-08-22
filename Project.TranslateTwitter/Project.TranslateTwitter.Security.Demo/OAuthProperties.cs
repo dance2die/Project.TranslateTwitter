@@ -1,16 +1,20 @@
-﻿using System;
-
-namespace Project.TranslateTwitter.Security.Demo
+﻿namespace Project.TranslateTwitter.Security.Demo
 {
 	public static class OAuthProperties
 	{
-		public static string AccessToken => Environment.GetEnvironmentVariable(
-			"Project_TranslateTwitter.AccessToken", EnvironmentVariableTarget.User);
-		public static string AccessTokenSecret => Environment.GetEnvironmentVariable(
-			"Project_TranslateTwitter.AccessTokenSecret", EnvironmentVariableTarget.User);
-		public static string ConsumerKey => Environment.GetEnvironmentVariable(
-			"Project_TranslateTwitter.ConsumerKey", EnvironmentVariableTarget.User);
-		public static string ConsumerKeySecret => Environment.GetEnvironmentVariable(
-			"Project_TranslateTwitter.ConsumerKeySecret", EnvironmentVariableTarget.User);
+		public static string AccessToken;
+		public static string AccessTokenSecret;
+		public static string ConsumerKey;
+		public static string ConsumerKeySecret;
+
+		static OAuthProperties()
+		{
+			var context = new AuthenticationContext();
+
+			AccessToken = context.AccessToken;
+			AccessTokenSecret = context.AccessTokenSecret;
+			ConsumerKey = context.ConsumerKey;
+			ConsumerKeySecret = context.ConsumerKeySecret;
+		}
 	}
 }
