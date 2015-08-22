@@ -25,7 +25,9 @@ namespace Project.TranslateTwitter.Security.Demo
 				ScreenName = screenName,
 				Count = count.ToString(),
 			};
-			var request = GetUserTimelineRequest(authenticationContext, requestParameters);
+
+			var requestBuilder = new RequestBuilder(authenticationContext);
+			var request = requestBuilder.GetRequest(requestParameters);
 
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -37,23 +39,6 @@ namespace Project.TranslateTwitter.Security.Demo
 				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
 					responseFromServer, new ExpandoObjectConverter());
 			}
-		}
-
-		private static HttpWebRequest GetUserTimelineRequest(
-			IAuthenticationContext authenticationContext, RequestParameters requestParameters)
-		{
-			OAuthHeaderBuilder oAuthHeaderBuilder = new OAuthHeaderBuilder(authenticationContext);
-			var authHeader = oAuthHeaderBuilder.BuildAuthHeader(requestParameters);
-
-			ServicePointManager.Expect100Continue = false;
-
-			var queryUrl = requestParameters.BuildRequestUrl(requestParameters.ResourceUrl);
-			var request = (HttpWebRequest)WebRequest.Create(queryUrl);
-			request.Headers.Add("Authorization", authHeader);
-			request.Method = requestParameters.HttpMethod;
-			request.ContentType = "application/x-www-form-urlencoded";
-
-			return request;
 		}
 	}
 }
