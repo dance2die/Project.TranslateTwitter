@@ -95,6 +95,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			return translatedText;
 		}
 
+		/// <remarks>
+		/// http://stackoverflow.com/a/2839629/4035
+		/// </remarks>
 		public static bool ExistsProperty(dynamic settings, string propertyName)
 		{
 			return ((IDictionary<string, object>) settings).ContainsKey(propertyName);
