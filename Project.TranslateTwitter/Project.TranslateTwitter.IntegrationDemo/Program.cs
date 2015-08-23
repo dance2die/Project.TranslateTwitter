@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			dynamic timeline = GetTweetTimeline();
 
 			// Pick a non-English tweet and translate it
-			//dynamic nonEnglishTweet = GetNonEnglishTweet(timeline);
+			dynamic nonEnglishTweet = GetNonEnglishTweet(timeline);
 			//string translatedTweet = TranslateTweet(nonEnglishTweet);
 
 			Console.Write("Press ENTER to continue...");
@@ -57,14 +58,16 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			return requestBuilder.GetRequest(requestParameters);
 		}
 
-		//private static dynamic GetNonEnglishTweet(dynamic timeline)
-		//{
-			
-		//}
+		private static dynamic GetNonEnglishTweet(dynamic timeline)
+		{
+			const string englishLanguageCode = "en";
+			IEnumerable enumerable = timeline as IEnumerable;
+			return enumerable?.Cast<dynamic>().FirstOrDefault(obj => obj.lang != englishLanguageCode);
+		}
 
 		//private static string TranslateTweet(dynamic nonEnglishTweet)
 		//{
-			
+
 		//}
 	}
 }
