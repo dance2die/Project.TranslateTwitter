@@ -27,7 +27,6 @@ namespace Project.TranslateTwitter.Security
 
 		protected RequestParameters(IAuthenticationContext authenticationContext)
 			: this(authenticationContext,
-				  new RequestHeaders(authenticationContext).Headers,
 				  new RequestHeaders(authenticationContext).Headers)
 		{
 		}
