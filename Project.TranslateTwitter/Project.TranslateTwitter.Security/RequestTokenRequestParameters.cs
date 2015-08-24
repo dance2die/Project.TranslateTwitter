@@ -1,4 +1,4 @@
-using System.Collections.Specialized;
+using System.Collections.Generic;
 
 namespace Project.TranslateTwitter.Security
 {
@@ -15,11 +15,6 @@ namespace Project.TranslateTwitter.Security
 		public override string BaseUrl { get; set; } = "https://api.twitter.com/oauth/request_token";
 		public override string HttpMethod { get; set; } = "POST";
 
-		protected override NameValueCollection GetNonCommonParameters()
-		{
-			return new NameValueCollection();
-		}
-
 		public string OAuthCallbackHeader
 		{
 			get { return Headers[OAUTH_CALLBACK_HEADERNAME]; }
@@ -29,6 +24,11 @@ namespace Project.TranslateTwitter.Security
 		public RequestTokenRequestParameters(IAuthenticationContext authenticationContext)
 			: base(authenticationContext)
 		{
+		}
+
+		public override Dictionary<string, string> GetQueryProperties()
+		{
+			return new Dictionary<string, string>(0);
 		}
 	}
 }

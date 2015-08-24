@@ -1,8 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 using System.Web;
 
 namespace Project.TranslateTwitter.Security
@@ -12,9 +9,9 @@ namespace Project.TranslateTwitter.Security
 		protected const string OAUTH_NONCE = "oauth_nonce";
 		protected const string OAUTH_TIMESTAMP = "oauth_timestamp";
 
-		public Dictionary<string, string> Headers { get; set; } 
-		public Dictionary<string, string> CommonParameters { get; set; }
 		public IAuthenticationContext AuthenticationContext { get; set; }
+		public Dictionary<string, string> CommonParameters { get; set; }
+		public Dictionary<string, string> Headers { get; set; }
 
 		public string OAuthNonce
 		{
@@ -29,52 +26,52 @@ namespace Project.TranslateTwitter.Security
 		}
 
 		protected RequestParameters(IAuthenticationContext authenticationContext)
+			: this(authenticationContext,
+				  new RequestHeaders(authenticationContext).Headers,
+				  new RequestHeaders(authenticationContext).Headers)
+		{
+		}
+
+		protected RequestParameters(
+			IAuthenticationContext authenticationContext, Dictionary<string, string> commonParameters)
+			: this(authenticationContext, commonParameters,
+				  new RequestHeaders(authenticationContext).Headers)
+		{
+		}
+
+		protected RequestParameters(
+			IAuthenticationContext authenticationContext,
+			Dictionary<string, string> commonParameters,
+			Dictionary<string, string> headers)
 		{
 			AuthenticationContext = authenticationContext;
-			CommonParameters = GetCommonParameters();
+			CommonParameters = commonParameters;
+			Headers = headers;
 		}
 
+		/// <summary>
+		/// Web API Resource URL
+		/// </summary>
 		public abstract string BaseUrl { get; set; }
 		public abstract string HttpMethod { get; set; }
-		protected abstract NameValueCollection GetNonCommonParameters();
+		/// <summary>
+		/// Query String parameters to Base URL
+		/// </summary>
+		public abstract Dictionary<string, string> GetQueryProperties();
 
-		protected Dictionary<string, string> GetCommonParameters()
+		protected string GetQueryString(IDictionary<string, string> query)
 		{
-			var oauthConsumerKey = AuthenticationContext.ConsumerKey;
-			var oauthNonce = Convert.ToBase64String(Encoding.ASCII.GetBytes(DateTime.Now.Ticks.ToString()));
-			var oauthTimestamp = GetTimeStamp();
-			var oauthToken = AuthenticationContext.AccessToken;
-
-			return new Dictionary<string, string>
-			{
-				{"oauth_consumer_key", oauthConsumerKey },
-				{"oauth_nonce", oauthNonce },
-				{"oauth_signature_method", OAuthDefaults.SignatureMethod },
-				{"oauth_timestamp", oauthTimestamp },
-				{"oauth_token", oauthToken },
-				{"oauth_version", OAuthDefaults.Version }
-			};
-		}
-
-		protected string GetQueryString(NameValueCollection query)
-		{
-			var array = (	from key in query.AllKeys
-							from value in query.GetValues(key)
-							orderby key
-							where !string.IsNullOrWhiteSpace(value)
-							select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+			var array = (from key in query.Keys
+						 let value = query[key]
+						 orderby key
+						 where !string.IsNullOrWhiteSpace(value)
+						 select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
 			return string.Join("&", array);
-		}
-
-		private string GetTimeStamp()
-		{
-			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
 		}
 
 		public string GetRequestUrl()
 		{
-			var queryString = GetQueryString(GetNonCommonParameters());
+			var queryString = GetQueryString(GetQueryProperties());
 			var result = $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
 			return result;
 		}

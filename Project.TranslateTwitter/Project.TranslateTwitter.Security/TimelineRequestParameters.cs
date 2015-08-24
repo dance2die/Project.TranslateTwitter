@@ -1,6 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Web;
 
 namespace Project.TranslateTwitter.Security
 {
@@ -8,7 +7,7 @@ namespace Project.TranslateTwitter.Security
 	{
 		private const string SCREENNAME_PARAMETERNAME = "screen_name";
 		private const string COUNT_PARAMETERNAME = "count";
-		private const string DEFAULT_COUNT = "5";
+		private const string DEFAULT_COUNT = "10";
 
 		public override string BaseUrl { get; set; } = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 		public override string HttpMethod { get; set; } = "GET";
@@ -31,9 +30,9 @@ namespace Project.TranslateTwitter.Security
 			Count = DEFAULT_COUNT;
 		}
 
-		protected override NameValueCollection GetNonCommonParameters()
+		public override Dictionary<string, string> GetQueryProperties()
 		{
-			return new NameValueCollection
+			return new Dictionary<string, string>
 			{
 				[SCREENNAME_PARAMETERNAME] = ScreenName,
 				[COUNT_PARAMETERNAME] = Count.ToString(CultureInfo.InvariantCulture)
