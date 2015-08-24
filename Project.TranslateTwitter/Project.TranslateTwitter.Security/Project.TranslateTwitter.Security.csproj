@@ -50,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestBuilder.cs" />
     <Compile Include="RequestParameters.cs" />
+    <Compile Include="RequestTokenRequestParameters.cs" />
     <Compile Include="TimelineRequestParameters.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

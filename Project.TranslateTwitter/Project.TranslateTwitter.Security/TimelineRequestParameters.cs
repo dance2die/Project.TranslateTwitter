@@ -6,6 +6,8 @@ namespace Project.TranslateTwitter.Security
 {
 	public class TimelineRequestParameters : RequestParameters
 	{
+		private const string SCREENNAME_PARAMETERNAME = "screen_name";
+		private const string COUNT_PARAMETERNAME = "count";
 		private const string DEFAULT_COUNT = "5";
 
 		public override string ResourceUrl { get; set; } = "https://api.twitter.com/1.1/statuses/user_timeline.json";
@@ -13,14 +15,14 @@ namespace Project.TranslateTwitter.Security
 
 		public string ScreenName
 		{
-			get { return CommonParameters[SCREEN_NAME]; }
-			set { CommonParameters[SCREEN_NAME] = value; }
+			get { return CommonParameters[SCREENNAME_PARAMETERNAME]; }
+			set { CommonParameters[SCREENNAME_PARAMETERNAME] = value; }
 		}
 
 		public string Count
 		{
-			get { return CommonParameters[COUNT]; }
-			set { CommonParameters[COUNT] = value; }
+			get { return CommonParameters[COUNT_PARAMETERNAME]; }
+			set { CommonParameters[COUNT_PARAMETERNAME] = value; }
 		}
 
 		public TimelineRequestParameters(IAuthenticationContext authenticationContext)
@@ -29,20 +31,13 @@ namespace Project.TranslateTwitter.Security
 			Count = DEFAULT_COUNT;
 		}
 
-		/// <param name="apiUrl">Twitter API URL</param>
-		/// <returns></returns>
-		public override string BuildRequestUrl(string apiUrl)
+		protected override NameValueCollection GetNonCommonParameters()
 		{
-			NameValueCollection query = new NameValueCollection
+			return new NameValueCollection
 			{
-				[SCREEN_NAME] = ScreenName,
-				[COUNT] = Count.ToString(CultureInfo.InvariantCulture)
+				[SCREENNAME_PARAMETERNAME] = ScreenName,
+				[COUNT_PARAMETERNAME] = Count.ToString(CultureInfo.InvariantCulture)
 			};
-
-			var queryString = GetQueryString(query);
-			var result = $"{apiUrl}?{HttpUtility.UrlDecode(queryString)}";
-
-			return result;
 		}
 	}
 }

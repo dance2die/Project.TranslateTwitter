@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -9,8 +10,6 @@ namespace Project.TranslateTwitter.Security
 {
 	public abstract class RequestParameters
 	{
-		protected const string SCREEN_NAME = "screen_name";
-		protected const string COUNT = "count";
 		protected const string OAUTH_NONCE = "oauth_nonce";
 		protected const string OAUTH_TIMESTAMP = "oauth_timestamp";
 
@@ -37,7 +36,7 @@ namespace Project.TranslateTwitter.Security
 
 		public abstract string ResourceUrl { get; set; }
 		public abstract string HttpMethod { get; set; }
-		public abstract string BuildRequestUrl(string apiUrl);
+		protected abstract NameValueCollection GetNonCommonParameters();
 
 		protected Dictionary<string, string> GetCommonParameters()
 		{
@@ -59,11 +58,11 @@ namespace Project.TranslateTwitter.Security
 
 		protected string GetQueryString(NameValueCollection query)
 		{
-			var array = (from key in query.AllKeys
-				from value in query.GetValues(key)
-				orderby key
-				where !string.IsNullOrWhiteSpace(value)
-				select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+			var array = (	from key in query.AllKeys
+							from value in query.GetValues(key)
+							orderby key
+							where !string.IsNullOrWhiteSpace(value)
+							select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
 			return string.Join("&", array);
 		}
 
@@ -71,6 +70,13 @@ namespace Project.TranslateTwitter.Security
 		{
 			var timeSpan = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 			return Convert.ToInt64(timeSpan.TotalSeconds).ToString();
+		}
+
+		public string GetRequestUrl()
+		{
+			var queryString = GetQueryString(GetNonCommonParameters());
+			var result = $"{ResourceUrl}?{HttpUtility.UrlDecode(queryString)}";
+			return result;
 		}
 	}
 }

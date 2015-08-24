@@ -18,7 +18,7 @@ namespace Project.TranslateTwitter.Security
 
 			ServicePointManager.Expect100Continue = false;
 
-			var queryUrl = requestParameters.BuildRequestUrl(requestParameters.ResourceUrl);
+			var queryUrl = requestParameters.GetRequestUrl();
 			var request = (HttpWebRequest)WebRequest.Create(queryUrl);
 			request.Headers.Add("Authorization", authHeader);
 			request.Method = requestParameters.HttpMethod;
