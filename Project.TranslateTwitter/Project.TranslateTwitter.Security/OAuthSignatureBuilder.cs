@@ -48,7 +48,7 @@ namespace Project.TranslateTwitter.Security
 			result.Append(separator);
 
 			// 3.) Percent encode the URL and append it to the output string.
-			result.Append(Uri.EscapeDataString(parameters.ResourceUrl));
+			result.Append(Uri.EscapeDataString(parameters.BaseUrl));
 
 			// 4.) Append the ‘&’ character to the output string.
 			result.Append(separator);

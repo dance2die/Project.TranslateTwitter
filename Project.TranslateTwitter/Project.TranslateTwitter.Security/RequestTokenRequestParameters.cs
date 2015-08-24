@@ -10,25 +10,21 @@ namespace Project.TranslateTwitter.Security
 		/// <remarks>
 		/// Constant unique to this request parameter
 		/// </remarks>
-		private const string OAUTH_CALLBACK_PARAMETERNAME = "oauth_callback";
+		private const string OAUTH_CALLBACK_HEADERNAME = "oauth_callback";
 
-		public override string ResourceUrl { get; set; } = "https://api.twitter.com/oauth/request_token";
+		public override string BaseUrl { get; set; } = "https://api.twitter.com/oauth/request_token";
 		public override string HttpMethod { get; set; } = "POST";
 
 		protected override NameValueCollection GetNonCommonParameters()
 		{
-			return new NameValueCollection
-			{
-				[OAUTH_CALLBACK_PARAMETERNAME] = OAuthCallback
-			};
+			return new NameValueCollection();
 		}
 
-		public string OAuthCallback
+		public string OAuthCallbackHeader
 		{
-			get { return CommonParameters[OAUTH_CALLBACK_PARAMETERNAME]; }
-			set { CommonParameters[OAUTH_CALLBACK_PARAMETERNAME] = value; }
+			get { return Headers[OAUTH_CALLBACK_HEADERNAME]; }
+			set { Headers[OAUTH_CALLBACK_HEADERNAME] = value; }
 		}
-
 
 		public RequestTokenRequestParameters(IAuthenticationContext authenticationContext)
 			: base(authenticationContext)

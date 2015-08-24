@@ -16,8 +16,45 @@ namespace Project.TranslateTwitter.IntegrationDemo
 	{
 		public static void Main(string[] args)
 		{
+			var authenticationContext = new AuthenticationContext();
+
+			TestTimeline(authenticationContext);
+			//TestSignInWithTwitter(authenticationContext);
+
+			Console.Write("Press ENTER to continue...");
+			Console.ReadLine();
+		}
+
+		private static void TestSignInWithTwitter(AuthenticationContext authenticationContext)
+		{
+			HttpWebRequest request = GetRequestTokenRequest(new AuthenticationContext());
+			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			using (Stream dataStream = response.GetResponseStream())
+			{
+				//Open the stream using a StreamReader for easy access.
+				StreamReader reader = new StreamReader(dataStream);
+				//Read the content.
+				string responseFromServer = reader.ReadToEnd();
+				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
+					responseFromServer, new ExpandoObjectConverter());
+			}
+		}
+
+		private static HttpWebRequest GetRequestTokenRequest(AuthenticationContext authenticationContext)
+		{
+			var requestBuilder = new RequestBuilder(authenticationContext);
+			var requestParameters = new RequestTokenRequestParameters(authenticationContext)
+			{
+				OAuthCallbackHeader = "http://localhost"
+			};
+
+			return requestBuilder.GetRequest(requestParameters);
+		}
+
+		private static void TestTimeline(AuthenticationContext authenticationContext)
+		{
 			// Retrieve Tweet timeline.
-			dynamic timeline = GetTweetTimeline();
+			dynamic timeline = GetTweetTimeline(authenticationContext);
 
 			// Pick a non-English tweet and translate it
 			dynamic nonEnglishTweet = GetNonEnglishTweet(timeline);
@@ -27,15 +64,12 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			Console.WriteLine(originalText);
 			Console.WriteLine("--- to ---");
 			Console.WriteLine(translatedTweet);
-
-			Console.Write("Press ENTER to continue...");
-			Console.ReadLine();
 		}
 
-		private static dynamic GetTweetTimeline()
+		private static dynamic GetTweetTimeline(AuthenticationContext authenticationContext)
 		{
 			string screenName = "dance2die";
-			var request = GetTimelineRequest(new AuthenticationContext(), screenName);
+			var request = GetTimelineRequest(authenticationContext, screenName);
 
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -88,7 +122,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 				"Project_TranslateTwitter.ClientSecret", EnvironmentVariableTarget.User);
 			var authenticationContext = new Translator.Microsoft.Auth.AuthenticationContext(clientId, clientSecret);
 
-			var translator = new TranslatorCommand(authenticationContext, 
+			var translator = new TranslatorCommand(authenticationContext,
 				new LanguageTranslatorArg(textToTranslate, detectedLanguage));
 			translator.Execute();
 			var translatedText = translator.Result;
@@ -100,7 +134,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		/// </remarks>
 		public static bool ExistsProperty(dynamic settings, string propertyName)
 		{
-			return ((IDictionary<string, object>) settings).ContainsKey(propertyName);
+			return ((IDictionary<string, object>)settings).ContainsKey(propertyName);
 		}
 	}
 }

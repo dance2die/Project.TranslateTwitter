@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
@@ -13,6 +12,7 @@ namespace Project.TranslateTwitter.Security
 		protected const string OAUTH_NONCE = "oauth_nonce";
 		protected const string OAUTH_TIMESTAMP = "oauth_timestamp";
 
+		public Dictionary<string, string> Headers { get; set; } 
 		public Dictionary<string, string> CommonParameters { get; set; }
 		public IAuthenticationContext AuthenticationContext { get; set; }
 
@@ -34,7 +34,7 @@ namespace Project.TranslateTwitter.Security
 			CommonParameters = GetCommonParameters();
 		}
 
-		public abstract string ResourceUrl { get; set; }
+		public abstract string BaseUrl { get; set; }
 		public abstract string HttpMethod { get; set; }
 		protected abstract NameValueCollection GetNonCommonParameters();
 
@@ -75,7 +75,7 @@ namespace Project.TranslateTwitter.Security
 		public string GetRequestUrl()
 		{
 			var queryString = GetQueryString(GetNonCommonParameters());
-			var result = $"{ResourceUrl}?{HttpUtility.UrlDecode(queryString)}";
+			var result = $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
 			return result;
 		}
 	}

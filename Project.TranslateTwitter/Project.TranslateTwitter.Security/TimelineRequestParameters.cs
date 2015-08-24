@@ -10,7 +10,7 @@ namespace Project.TranslateTwitter.Security
 		private const string COUNT_PARAMETERNAME = "count";
 		private const string DEFAULT_COUNT = "5";
 
-		public override string ResourceUrl { get; set; } = "https://api.twitter.com/1.1/statuses/user_timeline.json";
+		public override string BaseUrl { get; set; } = "https://api.twitter.com/1.1/statuses/user_timeline.json";
 		public override string HttpMethod { get; set; } = "GET";
 
 		public string ScreenName
