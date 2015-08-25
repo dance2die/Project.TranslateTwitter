@@ -19,9 +19,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			IAuthenticationContext authenticationContext = new AuthenticationContext();
 			//authenticationContext = new TestAuthenticationContext();
 
-			//TestTimeline(authenticationContext);
+			TestTimeline(authenticationContext);
 			//TestSignInWithTwitter(authenticationContext);
-			TestStatusUpdate(authenticationContext);
+			//TestStatusUpdate(authenticationContext);
 
 			Console.Write("Press ENTER to continue...");
 			Console.ReadLine();
