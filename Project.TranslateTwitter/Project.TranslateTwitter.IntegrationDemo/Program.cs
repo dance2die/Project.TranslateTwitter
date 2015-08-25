@@ -46,6 +46,10 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
 			var requestParameters = new UpdateStatusRequestParameters(authenticationContext, $"Testing Twitter API - {DateTime.Now.ToShortDateString()}");
+			requestParameters = new UpdateStatusRequestParameters(
+				authenticationContext, "Maybe he'll finally find his keys. #peterfalk");
+			requestParameters.OAuthNonce = "ac8d8f7f95e2709cf012867a2303fbe2";
+			requestParameters.OAuthTimestamp = "1440524726";
 
 			return requestBuilder.GetRequest(requestParameters);
 		}

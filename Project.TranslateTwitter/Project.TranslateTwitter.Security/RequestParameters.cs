@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,11 +7,10 @@ namespace Project.TranslateTwitter.Security
 {
 	public abstract class RequestParameters
 	{
-		protected const string OAUTH_NONCE = "oauth_nonce";
-		protected const string OAUTH_TIMESTAMP = "oauth_timestamp";
+		private const string OAUTH_NONCE = "oauth_nonce";
+		private const string OAUTH_TIMESTAMP = "oauth_timestamp";
 
 		public IAuthenticationContext AuthenticationContext { get; set; }
-		public Dictionary<string, string> CommonParameters { get; set; }
 
 		/// <summary>
 		/// Web API Resource URL
@@ -24,14 +24,14 @@ namespace Project.TranslateTwitter.Security
 
 		public string OAuthNonce
 		{
-			get { return CommonParameters[OAUTH_NONCE]; }
-			set { CommonParameters[OAUTH_NONCE] = value; }
+			get { return Headers.Values[OAUTH_NONCE]; }
+			set { Headers.Values[OAUTH_NONCE] = value; }
 		}
 
 		public string OAuthTimestamp
 		{
-			get { return CommonParameters[OAUTH_TIMESTAMP]; }
-			set { CommonParameters[OAUTH_TIMESTAMP] = value; }
+			get { return Headers.Values[OAUTH_TIMESTAMP]; }
+			set { Headers.Values[OAUTH_TIMESTAMP] = value; }
 		}
 
 		protected RequestParameters(IAuthenticationContext authenticationContext)
@@ -53,7 +53,6 @@ namespace Project.TranslateTwitter.Security
 			RequestHeaders headers)
 		{
 			AuthenticationContext = authenticationContext;
-			CommonParameters = commonParameters;
 			Headers = headers;
 		}
 
@@ -71,7 +70,8 @@ namespace Project.TranslateTwitter.Security
 						 let value = query[key]
 						 orderby key
 						 where !string.IsNullOrWhiteSpace(value)
-						 select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+						 //select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
+						 select $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}").ToArray();
 			return string.Join(separator, array);
 		}
 
@@ -80,7 +80,7 @@ namespace Project.TranslateTwitter.Security
 			var queryString = GetEncodedString(QueryProperties);
 			if (string.IsNullOrWhiteSpace(queryString))
 				return BaseUrl;
-			return $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
+			return $"{BaseUrl}?{queryString}";
 		}
 
 		public string GetPostBody()

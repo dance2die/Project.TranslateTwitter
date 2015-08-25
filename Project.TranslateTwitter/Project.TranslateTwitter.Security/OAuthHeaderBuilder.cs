@@ -47,7 +47,7 @@ namespace Project.TranslateTwitter.Security
 			List<string> paramList = new List<string>(query.Count);
 			foreach (var requestParam in query)
 			{
-				paramList.Add($"{requestParam.Key}={Uri.EscapeDataString(requestParam.Value)}");
+				paramList.Add($"{requestParam.Key}=\"{Uri.EscapeDataString(requestParam.Value)}\"");
 			}
 
 			return string.Join(separator, paramList.ToArray());
