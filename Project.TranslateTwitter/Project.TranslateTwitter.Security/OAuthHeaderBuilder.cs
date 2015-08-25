@@ -19,7 +19,7 @@ namespace Project.TranslateTwitter.Security
 			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
 			requestParameters.Headers.AddOAuthSignature(oauthSignature);
 
-			return GetParameterString(requestParameters.Headers.Values);
+			return $"OAuth {GetParameterString(requestParameters.Headers.Values, ", ")}";
 			//var headerFormat =
 			//	"OAuth oauth_consumer_key=\"{0}\", oauth_nonce=\"{1}\", " +
 			//	"oauth_signature=\"{2}\", oauth_signature_method=\"{3}\", " +

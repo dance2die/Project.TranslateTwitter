@@ -8,7 +8,6 @@ using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Project.TranslateTwitter.Security;
-using Project.TranslateTwitter.Security.Demo;
 using Project.TranslateTwitter.Translator.Microsoft.Commands;
 
 namespace Project.TranslateTwitter.IntegrationDemo
@@ -18,11 +17,11 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public static void Main(string[] args)
 		{
 			IAuthenticationContext authenticationContext = new AuthenticationContext();
-			authenticationContext = new TestAuthenticationContext();
+			//authenticationContext = new TestAuthenticationContext();
 
 
-			//TestTimeline(authenticationContext);
-			TestSignInWithTwitter(authenticationContext);
+			TestTimeline(authenticationContext);
+			//TestSignInWithTwitter(authenticationContext);
 
 			Console.Write("Press ENTER to continue...");
 			Console.ReadLine();
@@ -164,19 +163,15 @@ namespace Project.TranslateTwitter.IntegrationDemo
 	/// </summary>
 	internal class TestRequestParameters : RequestParameters
 	{
+		public override string BaseUrl { get; set; } = "https://api.twitter.com/1/statuses/update.json";
+		public override string HttpMethod { get; set; } = "POST";
+
+		public override Dictionary<string, string> QueryProperties { get; set; } = new Dictionary<string, string>{{"include_entities", "true"}};
+		public override Dictionary<string, string> BodyProperties { get; set; } = new Dictionary<string, string>(0);
+
 		public TestRequestParameters(IAuthenticationContext authenticationContext)
 			: base(authenticationContext)
 		{
-		}
-
-		public override string BaseUrl { get; set; } = "https://api.twitter.com/1/statuses/update.json";
-		public override string HttpMethod { get; set; } = "POST";
-		public override Dictionary<string, string> GetQueryProperties()
-		{
-			return new Dictionary<string, string>
-			{
-				{"include_entities", "true" }
-			};
 		}
 	}
 }

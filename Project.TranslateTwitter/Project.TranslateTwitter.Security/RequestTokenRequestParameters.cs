@@ -14,6 +14,8 @@ namespace Project.TranslateTwitter.Security
 
 		public override string BaseUrl { get; set; } = "https://api.twitter.com/oauth/request_token";
 		public override string HttpMethod { get; set; } = "POST";
+		public override Dictionary<string, string> QueryProperties { get; set; } = new Dictionary<string, string>();
+		public override Dictionary<string, string> BodyProperties { get; set; } = new Dictionary<string, string>();
 
 		public string OAuthCallbackHeader
 		{
@@ -25,11 +27,6 @@ namespace Project.TranslateTwitter.Security
 			: base(authenticationContext)
 		{
 			OAuthCallbackHeader = oauthCallbackHeader;
-		}
-
-		public override Dictionary<string, string> GetQueryProperties()
-		{
-			return new Dictionary<string, string>(0);
 		}
 	}
 }

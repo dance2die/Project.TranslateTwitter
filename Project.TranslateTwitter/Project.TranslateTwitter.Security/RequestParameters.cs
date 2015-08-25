@@ -11,6 +11,15 @@ namespace Project.TranslateTwitter.Security
 
 		public IAuthenticationContext AuthenticationContext { get; set; }
 		public Dictionary<string, string> CommonParameters { get; set; }
+
+		/// <summary>
+		/// Web API Resource URL
+		/// </summary>
+		public abstract string BaseUrl { get; set; }
+		public abstract string HttpMethod { get; set; }
+
+		public abstract Dictionary<string, string> QueryProperties { get; set; }
+		public abstract Dictionary<string, string> BodyProperties { get; set; }
 		public RequestHeaders Headers { get; set; }
 
 		public string OAuthNonce
@@ -48,17 +57,20 @@ namespace Project.TranslateTwitter.Security
 			Headers = headers;
 		}
 
-		/// <summary>
-		/// Web API Resource URL
-		/// </summary>
-		public abstract string BaseUrl { get; set; }
-		public abstract string HttpMethod { get; set; }
-		/// <summary>
-		/// Query String parameters to Base URL
-		/// </summary>
-		public abstract Dictionary<string, string> GetQueryProperties();
+		public Dictionary<string, string> GetParameters()
+		{
+			var parameters = Headers.Values.Union(QueryProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
+			parameters = parameters.Union(BodyProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
 
-		protected string GetQueryString(IDictionary<string, string> query)
+			return parameters;
+		}
+
+		//protected string GetParameterString()
+		//{
+		//	return GetQueryString(GetParameters());
+		//}
+
+		private string GetQueryString(IDictionary<string, string> query)
 		{
 			var array = (from key in query.Keys
 						 let value = query[key]
@@ -70,7 +82,7 @@ namespace Project.TranslateTwitter.Security
 
 		public string GetRequestUrl()
 		{
-			var queryString = GetQueryString(GetQueryProperties());
+			var queryString = GetQueryString(QueryProperties);
 			if (string.IsNullOrWhiteSpace(queryString))
 				return BaseUrl;
 			return $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
