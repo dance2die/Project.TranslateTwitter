@@ -49,8 +49,13 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestAuthenticationContext.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Project.TranslateTwitter.Security.Demo\Project.TranslateTwitter.Security.Demo.csproj">
+      <Project>{D30FFB09-BA2A-4F0C-8A29-F2D8087AA47C}</Project>
+      <Name>Project.TranslateTwitter.Security.Demo</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Project.TranslateTwitter.Security\Project.TranslateTwitter.Security.csproj">
       <Project>{975c53cf-66d1-412d-97f9-979edfe83f0b}</Project>
       <Name>Project.TranslateTwitter.Security</Name>

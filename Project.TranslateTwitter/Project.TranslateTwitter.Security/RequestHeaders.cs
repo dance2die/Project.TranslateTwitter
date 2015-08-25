@@ -6,13 +6,18 @@ namespace Project.TranslateTwitter.Security
 {
 	public class RequestHeaders
 	{
-		public Dictionary<string, string> Headers { get; }
 		public IAuthenticationContext AuthenticationContext { get; set; }
+		public Dictionary<string, string> Values { get; }
 
 		public RequestHeaders(IAuthenticationContext authenticationContext)
 		{
 			AuthenticationContext = authenticationContext;
-			Headers = GetCommonHeaders();
+			Values = GetCommonHeaders();
+		}
+
+		public void AddOAuthSignature(string signature)
+		{
+			Values.Add("oauth_signature", signature);
 		}
 
 		protected Dictionary<string, string> GetCommonHeaders()

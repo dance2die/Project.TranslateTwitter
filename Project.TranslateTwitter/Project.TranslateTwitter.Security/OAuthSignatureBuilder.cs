@@ -65,6 +65,7 @@ namespace Project.TranslateTwitter.Security
 			var query = (from requestParam in requestParameters
 							 // According to Twitter spec,
 							 // Sort the list of parameters alphabetically[1] by encoded key[2].
+						 where string.IsNullOrWhiteSpace(requestParam.Value) == false
 						 orderby requestParam.Key
 						 select new { requestParam.Key, requestParam.Value }).ToList();
 

@@ -8,6 +8,7 @@ using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Project.TranslateTwitter.Security;
+using Project.TranslateTwitter.Security.Demo;
 using Project.TranslateTwitter.Translator.Microsoft.Commands;
 
 namespace Project.TranslateTwitter.IntegrationDemo
@@ -16,18 +17,20 @@ namespace Project.TranslateTwitter.IntegrationDemo
 	{
 		public static void Main(string[] args)
 		{
-			var authenticationContext = new AuthenticationContext();
+			IAuthenticationContext authenticationContext = new AuthenticationContext();
+			authenticationContext = new TestAuthenticationContext();
 
-			TestTimeline(authenticationContext);
-			//TestSignInWithTwitter(authenticationContext);
+
+			//TestTimeline(authenticationContext);
+			TestSignInWithTwitter(authenticationContext);
 
 			Console.Write("Press ENTER to continue...");
 			Console.ReadLine();
 		}
 
-		private static void TestSignInWithTwitter(AuthenticationContext authenticationContext)
+		private static void TestSignInWithTwitter(IAuthenticationContext authenticationContext)
 		{
-			HttpWebRequest request = GetRequestTokenRequest(new AuthenticationContext());
+			HttpWebRequest request = GetRequestTokenRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
 			{
@@ -40,18 +43,36 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			}
 		}
 
-		private static HttpWebRequest GetRequestTokenRequest(AuthenticationContext authenticationContext)
+		private static HttpWebRequest GetRequestTokenRequest(IAuthenticationContext authenticationContext)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
-			var requestParameters = new RequestTokenRequestParameters(authenticationContext)
-			{
-				OAuthCallbackHeader = "http://localhost"
-			};
+			//var requestParameters = new RequestTokenRequestParameters(authenticationContext, "http://localhost");
+			RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext);
+			requestParameters = new TestRequestParameters(authenticationContext);
+			requestParameters.CommonParameters = GetTestRequestParams();
 
 			return requestBuilder.GetRequest(requestParameters);
 		}
 
-		private static void TestTimeline(AuthenticationContext authenticationContext)
+		private static Dictionary<string, string> GetTestRequestParams()
+		{
+			Dictionary<string, string> parameters = new Dictionary<string, string>
+			{
+				{"include_entities", "true" },
+				{"status", "Hello Ladies + Gentlemen, a signed OAuth request!" },
+				{"oauth_consumer_key", "xvz1evFS4wEEPTGEFPHBog" },
+				{"oauth_nonce", "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg" },
+				{"oauth_signature_method", "HMAC-SHA1" },
+				{"oauth_timestamp", "1318622958" },
+				{"oauth_token", "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb" },
+				{"oauth_version", "1.0" },
+			};
+
+			return parameters;
+		}
+
+
+		private static void TestTimeline(IAuthenticationContext authenticationContext)
 		{
 			// Retrieve Tweet timeline.
 			dynamic timeline = GetTweetTimeline(authenticationContext);
@@ -66,7 +87,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			Console.WriteLine(translatedTweet);
 		}
 
-		private static dynamic GetTweetTimeline(AuthenticationContext authenticationContext)
+		private static dynamic GetTweetTimeline(IAuthenticationContext authenticationContext)
 		{
 			string screenName = "dance2die";
 			var request = GetTimelineRequest(authenticationContext, screenName);
@@ -84,7 +105,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			}
 		}
 
-		private static HttpWebRequest GetTimelineRequest(AuthenticationContext authenticationContext, string screenName)
+		private static HttpWebRequest GetTimelineRequest(IAuthenticationContext authenticationContext, string screenName)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
 			var requestParameters = new TimelineRequestParameters(authenticationContext)
@@ -135,6 +156,27 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public static bool ExistsProperty(dynamic settings, string propertyName)
 		{
 			return ((IDictionary<string, object>)settings).ContainsKey(propertyName);
+		}
+	}
+
+	/// <summary>
+	/// https://dev.twitter.com/oauth/overview/creating-signatures
+	/// </summary>
+	internal class TestRequestParameters : RequestParameters
+	{
+		public TestRequestParameters(IAuthenticationContext authenticationContext)
+			: base(authenticationContext)
+		{
+		}
+
+		public override string BaseUrl { get; set; } = "https://api.twitter.com/1/statuses/update.json";
+		public override string HttpMethod { get; set; } = "POST";
+		public override Dictionary<string, string> GetQueryProperties()
+		{
+			return new Dictionary<string, string>
+			{
+				{"include_entities", "true" }
+			};
 		}
 	}
 }

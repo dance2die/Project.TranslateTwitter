@@ -11,7 +11,7 @@ namespace Project.TranslateTwitter.Security
 
 		public IAuthenticationContext AuthenticationContext { get; set; }
 		public Dictionary<string, string> CommonParameters { get; set; }
-		public Dictionary<string, string> Headers { get; set; }
+		public RequestHeaders Headers { get; set; }
 
 		public string OAuthNonce
 		{
@@ -27,21 +27,21 @@ namespace Project.TranslateTwitter.Security
 
 		protected RequestParameters(IAuthenticationContext authenticationContext)
 			: this(authenticationContext,
-				  new RequestHeaders(authenticationContext).Headers)
+				  new RequestHeaders(authenticationContext).Values)
 		{
 		}
 
 		protected RequestParameters(
 			IAuthenticationContext authenticationContext, Dictionary<string, string> commonParameters)
 			: this(authenticationContext, commonParameters,
-				  new RequestHeaders(authenticationContext).Headers)
+				  new RequestHeaders(authenticationContext))
 		{
 		}
 
 		protected RequestParameters(
 			IAuthenticationContext authenticationContext,
 			Dictionary<string, string> commonParameters,
-			Dictionary<string, string> headers)
+			RequestHeaders headers)
 		{
 			AuthenticationContext = authenticationContext;
 			CommonParameters = commonParameters;
@@ -71,8 +71,9 @@ namespace Project.TranslateTwitter.Security
 		public string GetRequestUrl()
 		{
 			var queryString = GetQueryString(GetQueryProperties());
-			var result = $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
-			return result;
+			if (string.IsNullOrWhiteSpace(queryString))
+				return BaseUrl;
+			return $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
 		}
 	}
 }
