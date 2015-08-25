@@ -19,12 +19,35 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			IAuthenticationContext authenticationContext = new AuthenticationContext();
 			//authenticationContext = new TestAuthenticationContext();
 
-
-			TestTimeline(authenticationContext);
+			//TestTimeline(authenticationContext);
 			//TestSignInWithTwitter(authenticationContext);
+			TestStatusUpdate(authenticationContext);
 
 			Console.Write("Press ENTER to continue...");
 			Console.ReadLine();
+		}
+
+		private static void TestStatusUpdate(IAuthenticationContext authenticationContext)
+		{
+			HttpWebRequest request = GetUpdateStatusRequest(authenticationContext);
+			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			using (Stream dataStream = response.GetResponseStream())
+			{
+				//Open the stream using a StreamReader for easy access.
+				StreamReader reader = new StreamReader(dataStream);
+				//Read the content.
+				string responseFromServer = reader.ReadToEnd();
+				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
+					responseFromServer, new ExpandoObjectConverter());
+			}
+		}
+
+		private static HttpWebRequest GetUpdateStatusRequest(IAuthenticationContext authenticationContext)
+		{
+			var requestBuilder = new RequestBuilder(authenticationContext);
+			var requestParameters = new UpdateStatusRequestParameters(authenticationContext, $"Testing Twitter API - {DateTime.Now.ToShortDateString()}");
+
+			return requestBuilder.GetRequest(requestParameters);
 		}
 
 		private static void TestSignInWithTwitter(IAuthenticationContext authenticationContext)
@@ -45,10 +68,10 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		private static HttpWebRequest GetRequestTokenRequest(IAuthenticationContext authenticationContext)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
-			//var requestParameters = new RequestTokenRequestParameters(authenticationContext, "http://localhost");
-			RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext);
-			requestParameters = new TestRequestParameters(authenticationContext);
-			requestParameters.CommonParameters = GetTestRequestParams();
+			var requestParameters = new RequestTokenRequestParameters(authenticationContext, "http://localhost/sign-in-with-twitter/");
+			//RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext);
+			//requestParameters = new TestRequestParameters(authenticationContext);
+			//requestParameters.CommonParameters = GetTestRequestParams();
 
 			return requestBuilder.GetRequest(requestParameters);
 		}

@@ -65,27 +65,27 @@ namespace Project.TranslateTwitter.Security
 			return parameters;
 		}
 
-		//protected string GetParameterString()
-		//{
-		//	return GetQueryString(GetParameters());
-		//}
-
-		private string GetQueryString(IDictionary<string, string> query)
+		private string GetEncodedString(IDictionary<string, string> query, string separator = "&")
 		{
 			var array = (from key in query.Keys
 						 let value = query[key]
 						 orderby key
 						 where !string.IsNullOrWhiteSpace(value)
 						 select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
-			return string.Join("&", array);
+			return string.Join(separator, array);
 		}
 
 		public string GetRequestUrl()
 		{
-			var queryString = GetQueryString(QueryProperties);
+			var queryString = GetEncodedString(QueryProperties);
 			if (string.IsNullOrWhiteSpace(queryString))
 				return BaseUrl;
 			return $"{BaseUrl}?{HttpUtility.UrlDecode(queryString)}";
+		}
+
+		public string GetPostBody()
+		{
+			return GetEncodedString(BodyProperties);
 		}
 	}
 }

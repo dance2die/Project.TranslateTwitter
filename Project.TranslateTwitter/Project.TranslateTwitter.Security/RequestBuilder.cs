@@ -1,4 +1,6 @@
+using System.IO;
 using System.Net;
+using System.Text;
 
 namespace Project.TranslateTwitter.Security
 {
@@ -23,6 +25,17 @@ namespace Project.TranslateTwitter.Security
 			request.Headers.Add("Authorization", authHeader);
 			request.Method = requestParameters.HttpMethod;
 			request.ContentType = "application/x-www-form-urlencoded";
+
+			string postBody = requestParameters.GetPostBody();
+
+			if (!string.IsNullOrWhiteSpace(postBody))
+			{
+				using (Stream stream = request.GetRequestStream())
+				{
+					byte[] content = Encoding.ASCII.GetBytes(postBody);
+					stream.Write(content, 0, content.Length);
+				}
+			}
 
 			return request;
 		}
