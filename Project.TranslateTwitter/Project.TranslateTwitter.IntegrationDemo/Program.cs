@@ -45,7 +45,8 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		private static HttpWebRequest GetUpdateStatusRequest(IAuthenticationContext authenticationContext)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
-			var requestParameters = new UpdateStatusRequestParameters(authenticationContext, $"Testing Twitter API - {DateTime.Now.ToShortDateString()}");
+			var requestParameters = new UpdateStatusRequestParameters(authenticationContext, 
+				$"Testing Twitter API - {DateTime.Now.ToString("mm/dd/yyyy hh:mm:ss")}");
 			//requestParameters = new UpdateStatusRequestParameters(
 			//	authenticationContext, "Maybe he'll finally find his keys. #peterfalk");
 			//requestParameters.OAuthNonce = "ac8d8f7f95e2709cf012867a2303fbe2";
