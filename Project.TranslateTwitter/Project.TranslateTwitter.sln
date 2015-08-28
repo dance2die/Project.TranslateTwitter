@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.TranslateTwitter.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.TranslateTwitter.IntegrationDemo", "Project.TranslateTwitter.IntegrationDemo\Project.TranslateTwitter.IntegrationDemo.csproj", "{20C5AA07-14D7-405B-AC1E-F775F232C94F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.TranslateTwitter.Integration.Test", "Project.TranslateTwitter.Integration.Test\Project.TranslateTwitter.Integration.Test.csproj", "{3E99843F-7F6A-448F-9F11-C0634E633675}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{20C5AA07-14D7-405B-AC1E-F775F232C94F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20C5AA07-14D7-405B-AC1E-F775F232C94F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20C5AA07-14D7-405B-AC1E-F775F232C94F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E99843F-7F6A-448F-9F11-C0634E633675}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E99843F-7F6A-448F-9F11-C0634E633675}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E99843F-7F6A-448F-9F11-C0634E633675}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E99843F-7F6A-448F-9F11-C0634E633675}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
