@@ -32,11 +32,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			HttpWebRequest request = GetUpdateStatusRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
+			using (StreamReader reader = new StreamReader(dataStream))
 			{
-				//Open the stream using a StreamReader for easy access.
-				StreamReader reader = new StreamReader(dataStream);
-				//Read the content.
-				string responseFromServer = reader.ReadToEnd();
+				var responseFromServer = reader.ReadToEnd();
 				//dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
 				//	responseFromServer, new ExpandoObjectConverter());
 
