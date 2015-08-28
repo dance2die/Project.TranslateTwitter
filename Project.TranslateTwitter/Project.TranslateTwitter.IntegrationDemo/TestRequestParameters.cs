@@ -14,7 +14,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public override Dictionary<string, string> QueryProperties { get; set; } 
 			= new Dictionary<string, string> { { "include_entities", "true" } };
 		public override Dictionary<string, string> BodyProperties { get; set; } 
-			= new Dictionary<string, string>(0);
+			= new Dictionary<string, string> { { "status", "Hello Ladies + Gentlemen, a signed OAuth request!" } };
 
 		public TestRequestParameters(IAuthenticationContext authenticationContext)
 			: base(authenticationContext)

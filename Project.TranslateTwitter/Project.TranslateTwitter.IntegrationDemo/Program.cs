@@ -17,7 +17,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public static void Main(string[] args)
 		{
 			IAuthenticationContext authenticationContext = new AuthenticationContext();
-			//authenticationContext = new TestAuthenticationContext();
+			authenticationContext = new TestAuthenticationContext();
 
 			//TestTimeline(authenticationContext);
 			//TestSignInWithTwitter(authenticationContext);
@@ -45,12 +45,15 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		private static HttpWebRequest GetUpdateStatusRequest(IAuthenticationContext authenticationContext)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
-			var requestParameters = new UpdateStatusRequestParameters(authenticationContext,
+			RequestParameters requestParameters = new UpdateStatusRequestParameters(authenticationContext,
 				$"Testing Twitter API - {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")}");
 			//requestParameters = new UpdateStatusRequestParameters(
 			//	authenticationContext, "Maybe he'll finally find his keys. #peterfalk");
-			//requestParameters.OAuthNonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
-			//requestParameters.OAuthTimestamp = "1318622958";
+			requestParameters = new TestRequestParameters(authenticationContext)
+			{
+				OAuthNonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
+				OAuthTimestamp = "1318622958"
+			};
 
 			return requestBuilder.GetRequest(requestParameters);
 		}
@@ -153,14 +156,14 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		private static string GetTweetText(dynamic tweet)
 		{
-			if (!ExistsProperty(tweet, "text"))
+			if (!HasDynamicProperty(tweet, "text"))
 				throw new Exception("\"text\" property doesn't exist!");
 			return tweet.text;
 		}
 
 		private static string TranslateTweet(dynamic nonEnglishTweet)
 		{
-			if (!ExistsProperty(nonEnglishTweet, "lang")) throw new Exception("\"lang\" property doesn't exist!");
+			if (!HasDynamicProperty(nonEnglishTweet, "lang")) throw new Exception("\"lang\" property doesn't exist!");
 
 			string textToTranslate = GetTweetText(nonEnglishTweet);
 			string detectedLanguage = nonEnglishTweet.lang;
@@ -180,26 +183,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		/// <remarks>
 		/// http://stackoverflow.com/a/2839629/4035
 		/// </remarks>
-		public static bool ExistsProperty(dynamic settings, string propertyName)
+		public static bool HasDynamicProperty(dynamic settings, string propertyName)
 		{
 			return ((IDictionary<string, object>)settings).ContainsKey(propertyName);
-		}
-	}
-
-	/// <summary>
-	/// https://dev.twitter.com/oauth/overview/creating-signatures
-	/// </summary>
-	internal class TestRequestParameters : RequestParameters
-	{
-		public override string BaseUrl { get; set; } = "https://api.twitter.com/1/statuses/update.json";
-		public override string HttpMethod { get; set; } = "POST";
-
-		public override Dictionary<string, string> QueryProperties { get; set; } = new Dictionary<string, string> { { "include_entities", "true" } };
-		public override Dictionary<string, string> BodyProperties { get; set; } = new Dictionary<string, string>(0);
-
-		public TestRequestParameters(IAuthenticationContext authenticationContext)
-			: base(authenticationContext)
-		{
 		}
 	}
 }
