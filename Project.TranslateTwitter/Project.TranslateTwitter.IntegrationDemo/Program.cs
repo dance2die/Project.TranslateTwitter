@@ -37,20 +37,22 @@ namespace Project.TranslateTwitter.IntegrationDemo
 				StreamReader reader = new StreamReader(dataStream);
 				//Read the content.
 				string responseFromServer = reader.ReadToEnd();
-				dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
-					responseFromServer, new ExpandoObjectConverter());
+				//dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
+				//	responseFromServer, new ExpandoObjectConverter());
+
+				Console.WriteLine(responseFromServer);
 			}
 		}
 
 		private static HttpWebRequest GetUpdateStatusRequest(IAuthenticationContext authenticationContext)
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
-			var requestParameters = new UpdateStatusRequestParameters(authenticationContext, 
-				$"Testing Twitter API - {DateTime.Now.ToString("mm/dd/yyyy hh:mm:ss")}");
+			var requestParameters = new UpdateStatusRequestParameters(authenticationContext,
+				$"Testing Twitter API - {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")}");
 			//requestParameters = new UpdateStatusRequestParameters(
 			//	authenticationContext, "Maybe he'll finally find his keys. #peterfalk");
-			//requestParameters.OAuthNonce = "ac8d8f7f95e2709cf012867a2303fbe2";
-			//requestParameters.OAuthTimestamp = "1440524726";
+			//requestParameters.OAuthNonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg";
+			//requestParameters.OAuthTimestamp = "1318622958";
 
 			return requestBuilder.GetRequest(requestParameters);
 		}
@@ -194,7 +196,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public override string BaseUrl { get; set; } = "https://api.twitter.com/1/statuses/update.json";
 		public override string HttpMethod { get; set; } = "POST";
 
-		public override Dictionary<string, string> QueryProperties { get; set; } = new Dictionary<string, string>{{"include_entities", "true"}};
+		public override Dictionary<string, string> QueryProperties { get; set; } = new Dictionary<string, string> { { "include_entities", "true" } };
 		public override Dictionary<string, string> BodyProperties { get; set; } = new Dictionary<string, string>(0);
 
 		public TestRequestParameters(IAuthenticationContext authenticationContext)

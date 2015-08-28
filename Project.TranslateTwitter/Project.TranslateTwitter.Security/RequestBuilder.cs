@@ -16,6 +16,10 @@ namespace Project.TranslateTwitter.Security
 		public HttpWebRequest GetRequest(RequestParameters requestParameters)
 		{
 			OAuthHeaderBuilder oAuthHeaderBuilder = new OAuthHeaderBuilder(AuthenticationContext);
+			OAuthSignatureBuilder signatureBuilder = new OAuthSignatureBuilder(AuthenticationContext);
+
+			string oauthSignature = signatureBuilder.CreateSignature(requestParameters);
+			requestParameters.Headers.AddOAuthSignature(oauthSignature);
 			var authHeader = oAuthHeaderBuilder.BuildAuthHeader(requestParameters);
 
 			ServicePointManager.Expect100Continue = false;
