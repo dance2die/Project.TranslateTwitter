@@ -13,8 +13,8 @@ namespace Project.TranslateTwitter.Security
 
 		public string Status
 		{
-			get { return QueryProperties[STATUS_BODYCONTENT_NAME]; }
-			set { QueryProperties[STATUS_BODYCONTENT_NAME] = value; }
+			get { return BodyProperties[STATUS_BODYCONTENT_NAME]; }
+			set { BodyProperties[STATUS_BODYCONTENT_NAME] = value; }
 		}
 
 		public UpdateStatusRequestParameters(IAuthenticationContext authenticationContext, string status)
