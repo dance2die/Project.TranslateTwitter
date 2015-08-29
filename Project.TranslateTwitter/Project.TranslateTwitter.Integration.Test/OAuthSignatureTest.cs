@@ -18,6 +18,19 @@ namespace Project.TranslateTwitter.Integration.Test
 		}
 
 		[Fact]
+		public void ValidateDictionaryJoiner()
+		{
+			var sut = new DictionaryToStringJoiner();
+			var joinedString = sut.Join(_testRequestParameters.GetParameters());
+
+			// From "https://dev.twitter.com/oauth/overview/creating-signatures"
+			const string paramterString =
+				"include_entities=true&oauth_consumer_key=xvz1evFS4wEEPTGEFPHBog&oauth_nonce=kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1318622958&oauth_token=370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb&oauth_version=1.0&status=Hello%20Ladies%20%2B%20Gentlemen%2C%20a%20signed%20OAuth%20request%21";
+
+			Assert.Equal(joinedString, paramterString);
+		}
+
+		[Fact]
 		public void ValidateSignatureBaseString()
 		{
 			var sut = new OAuthSignatureBuilder(_authenticationContext);

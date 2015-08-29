@@ -62,21 +62,8 @@ namespace Project.TranslateTwitter.Security
 
 		private string GetParameterString(IDictionary<string, string> requestParameters, string separator)
 		{
-			var query = (from requestParam in requestParameters
-							 // According to Twitter spec,
-							 // Sort the list of parameters alphabetically[1] by encoded key[2].
-						 where string.IsNullOrWhiteSpace(requestParam.Value) == false
-						 orderby requestParam.Key
-						 select new { requestParam.Key, requestParam.Value }).ToList();
-
-			List<string> paramList = new List<string>(query.Count);
-			foreach (var requestParam in query)
-			{
-				paramList.Add($"{requestParam.Key}={Uri.EscapeDataString(requestParam.Value)}");
-			}
-
-			return string.Join(separator, paramList.ToArray());
-		}
+			return new DictionaryToStringJoiner().Join(requestParameters, separator);
+        }
 
 		private string GetSigningKey()
 		{

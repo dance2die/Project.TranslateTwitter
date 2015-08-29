@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthenticationContext.cs" />
+    <Compile Include="DictionaryToStringJoiner.cs" />
     <Compile Include="IAuthenticationContext.cs" />
     <Compile Include="OAuthDefaults.cs" />
     <Compile Include="OAuthHeaderBuilder.cs" />

@@ -63,17 +63,6 @@ namespace Project.TranslateTwitter.Security
 			return parameters;
 		}
 
-		private string GetEncodedString(IDictionary<string, string> query, string separator = "&")
-		{
-			var array = (from key in query.Keys
-						 let value = query[key]
-						 orderby key
-						 where !string.IsNullOrWhiteSpace(value)
-						 //select $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(value)}").ToArray();
-						 select $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(value)}").ToArray();
-			return string.Join(separator, array);
-		}
-
 		public string GetRequestUrl()
 		{
 			var queryString = GetEncodedString(QueryProperties);
@@ -85,6 +74,11 @@ namespace Project.TranslateTwitter.Security
 		public string GetPostBody()
 		{
 			return GetEncodedString(BodyProperties);
+		}
+
+		private string GetEncodedString(IDictionary<string, string> dictionary)
+		{
+			return new DictionaryToStringJoiner().Join(dictionary);
 		}
 	}
 }
