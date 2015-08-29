@@ -8,7 +8,7 @@ namespace Project.TranslateTwitter.Security
 	/// <remarks>
 	/// https://dev.twitter.com/oauth/reference/get/oauth/authenticate
 	/// </remarks>
-	public class AuthenticateRequestParameter : RequestParameters
+	public class AuthenticateRequestParameters : RequestParameters
 	{
 		private const string OAUTH_TOKEN_QUERYNAME = "oauth_token";
 
@@ -23,7 +23,7 @@ namespace Project.TranslateTwitter.Security
 			set { QueryProperties[OAUTH_TOKEN_QUERYNAME] = value; }
 		}
 
-		public AuthenticateRequestParameter(IAuthenticationContext authenticationContext, string oauthToken)
+		public AuthenticateRequestParameters(IAuthenticationContext authenticationContext, string oauthToken)
 			: base(authenticationContext)
 		{
 			OAuthToken = oauthToken;
