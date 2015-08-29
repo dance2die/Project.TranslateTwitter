@@ -32,7 +32,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		}
 
-		private static IEnumerable<string> GetRequestTokens(IAuthenticationContext authenticationContext)
+		private static IDictionary<string, string> GetRequestTokens(IAuthenticationContext authenticationContext)
 		{
 			HttpWebRequest request = GetRequestTokenRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -43,9 +43,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 				//Read the content.
 				string responseFromServer = reader.ReadToEnd();
 
-				return responseFromServer.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries);
+				var tokens = responseFromServer.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries);
+				return tokens.ToDictionary(s => s.Split('=')[0], s => s.Split('=')[1]);
 			}
-
 		}
 
 		private static HttpWebRequest GetRequestTokenRequest(IAuthenticationContext authenticationContext)
