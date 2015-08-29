@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
+using System.Threading;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Project.TranslateTwitter.Security;
@@ -28,11 +32,62 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		private static void TestSignInWithTwitter(IAuthenticationContext authenticationContext)
 		{
-			var requestTokens = GetRequestTokens(authenticationContext);
+			Dictionary<string, string> requestTokens = GetRequestTokens(authenticationContext);
+			string oauthToken = requestTokens["oauth_token"];
 
+			HttpWebRequest request = GetAuthenticationRequest(authenticationContext, oauthToken);
+
+			//RunBrowserThread(request.RequestUri);
+			var process = Process.Start(request.RequestUri.ToString());
+			//process.OutputDataReceived += Process_OutputDataReceived;
+
+			//using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+			//using (Stream responseStream = response.GetResponseStream())
+			//using (StreamReader streamReader = new StreamReader(responseStream))
+			//{
+			//	string responseFromServer = streamReader.ReadToEnd();
+			//	Console.WriteLine(responseFromServer);
+			//}
 		}
 
-		private static IDictionary<string, string> GetRequestTokens(IAuthenticationContext authenticationContext)
+		private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+		{
+			Console.WriteLine(e.Data);
+		}
+
+		/// <remarks>http://stackoverflow.com/a/4271581/4035</remarks>
+		private static void RunBrowserThread(Uri url)
+		{
+			var th = new Thread(() => {
+				var br = new WebBrowser();
+				br.DocumentCompleted += browser_DocumentCompleted;
+				br.Navigate(url);
+				Application.Run();
+			});
+			th.SetApartmentState(ApartmentState.STA);
+			th.Start();
+		}
+
+		/// <remarks>http://stackoverflow.com/a/4271581/4035</remarks>
+		private static void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+		{
+			var br = sender as WebBrowser;
+			if (br.Url == e.Url)
+			{
+				Console.WriteLine("Natigated to {0}", e.Url);
+				Application.ExitThread();   // Stops the thread
+			}
+		}
+
+		private static HttpWebRequest GetAuthenticationRequest(
+			IAuthenticationContext authenticationContext, string oauthToken)
+		{
+			RequestParameters authenticateRequestParameters = 
+				new AuthenticateRequestParameter(authenticationContext, oauthToken);
+			return GetWebRequest(authenticationContext, authenticateRequestParameters);
+		}
+
+		private static Dictionary<string, string> GetRequestTokens(IAuthenticationContext authenticationContext)
 		{
 			HttpWebRequest request = GetRequestTokenRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
@@ -50,13 +105,19 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		private static HttpWebRequest GetRequestTokenRequest(IAuthenticationContext authenticationContext)
 		{
-			var requestBuilder = new RequestBuilder(authenticationContext);
 			var requestParameters = new RequestTokenRequestParameters(
 				authenticationContext, "http://localhost/sign-in-with-twitter/");
 			//RequestParameters requestParameters = new TimelineRequestParameters(authenticationContext);
 			//requestParameters = new TestRequestParameters(authenticationContext);
 			//requestParameters.CommonParameters = GetTestRequestParams();
 
+			return GetWebRequest(authenticationContext, requestParameters);
+		}
+
+		private static HttpWebRequest GetWebRequest(
+			IAuthenticationContext authenticationContext, RequestParameters requestParameters)
+		{
+			var requestBuilder = new RequestBuilder(authenticationContext);
 			return requestBuilder.GetRequest(requestParameters);
 		}
 

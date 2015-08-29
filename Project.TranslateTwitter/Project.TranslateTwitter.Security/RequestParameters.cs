@@ -32,22 +32,14 @@ namespace Project.TranslateTwitter.Security
 			set { Headers.Values[OAUTH_TIMESTAMP] = value; }
 		}
 
-		protected RequestParameters(IAuthenticationContext authenticationContext)
-			: this(authenticationContext,
-				  new RequestHeaders(authenticationContext).Values)
-		{
-		}
-
 		protected RequestParameters(
-			IAuthenticationContext authenticationContext, Dictionary<string, string> commonParameters)
-			: this(authenticationContext, commonParameters,
-				  new RequestHeaders(authenticationContext))
+			IAuthenticationContext authenticationContext)
+			: this(authenticationContext, new RequestHeaders(authenticationContext))
 		{
 		}
 
 		protected RequestParameters(
 			IAuthenticationContext authenticationContext,
-			Dictionary<string, string> commonParameters,
 			RequestHeaders headers)
 		{
 			AuthenticationContext = authenticationContext;
@@ -56,10 +48,22 @@ namespace Project.TranslateTwitter.Security
 
 		public Dictionary<string, string> GetParameters()
 		{
-			var parameters = Headers.Values.Union(QueryProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
-			parameters = parameters.Union(BodyProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
+			//var parameters = Headers.Values.Union(QueryProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
+			//parameters = parameters.Union(BodyProperties).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+			var parameters = CombineDictionaries(new Dictionary<int, Dictionary<string, string>>
+			{
+				{0, Headers.Values}, 
+				{1, QueryProperties}, 
+				{2, BodyProperties}, 
+			});
 
 			return parameters;
+		}
+
+		private Dictionary<string, string> CombineDictionaries(Dictionary<int, Dictionary<string, string>> dictionaries)
+		{
+			return new DictionaryMerger().MergeDictionaries(dictionaries);
 		}
 
 		public string GetRequestUrl()
