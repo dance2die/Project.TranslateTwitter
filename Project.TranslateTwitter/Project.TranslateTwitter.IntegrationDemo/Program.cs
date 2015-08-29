@@ -28,6 +28,12 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		private static void TestSignInWithTwitter(IAuthenticationContext authenticationContext)
 		{
+			var requestTokens = GetRequestTokens(authenticationContext);
+
+		}
+
+		private static IEnumerable<string> GetRequestTokens(IAuthenticationContext authenticationContext)
+		{
 			HttpWebRequest request = GetRequestTokenRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
@@ -36,9 +42,10 @@ namespace Project.TranslateTwitter.IntegrationDemo
 				StreamReader reader = new StreamReader(dataStream);
 				//Read the content.
 				string responseFromServer = reader.ReadToEnd();
-				//dynamic dynamicObject = JsonConvert.DeserializeObject<List<ExpandoObject>>(
-				//	responseFromServer, new ExpandoObjectConverter());
+
+				return responseFromServer.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries);
 			}
+
 		}
 
 		private static HttpWebRequest GetRequestTokenRequest(IAuthenticationContext authenticationContext)
