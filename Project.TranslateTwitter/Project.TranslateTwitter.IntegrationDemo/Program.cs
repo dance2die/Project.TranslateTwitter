@@ -17,7 +17,7 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		public static void Main(string[] args)
 		{
 			IAuthenticationContext authenticationContext = new AuthenticationContext();
-			authenticationContext = new TestAuthenticationContext();
+			//authenticationContext = new TestAuthenticationContext();
 
 			//TestTimeline(authenticationContext);
 			//TestSignInWithTwitter(authenticationContext);
@@ -46,14 +46,14 @@ namespace Project.TranslateTwitter.IntegrationDemo
 		{
 			var requestBuilder = new RequestBuilder(authenticationContext);
 			RequestParameters requestParameters = new UpdateStatusRequestParameters(authenticationContext,
-				$"Testing Twitter API - {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss")}");
+				$"Testing Twitter API - {DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss tt")}");
 			//requestParameters = new UpdateStatusRequestParameters(
 			//	authenticationContext, "Maybe he'll finally find his keys. #peterfalk");
-			requestParameters = new TestRequestParameters(authenticationContext)
-			{
-				OAuthNonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
-				OAuthTimestamp = "1318622958"
-			};
+			//requestParameters = new TestRequestParameters(authenticationContext)
+			//{
+			//	OAuthNonce = "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
+			//	OAuthTimestamp = "1318622958"
+			//};
 
 			return requestBuilder.GetRequest(requestParameters);
 		}
