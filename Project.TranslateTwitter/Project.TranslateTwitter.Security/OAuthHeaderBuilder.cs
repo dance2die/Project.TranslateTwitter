@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Project.TranslateTwitter.Security
 {
@@ -20,17 +18,7 @@ namespace Project.TranslateTwitter.Security
 
 		private string GetParameterString(IDictionary<string, string> requestParameters, string separator = "&")
 		{
-			var query = (from requestParam in requestParameters
-						 orderby requestParam.Key
-						 select new { requestParam.Key, requestParam.Value }).ToList();
-
-			List<string> paramList = new List<string>(query.Count);
-			foreach (var requestParam in query)
-			{
-				paramList.Add($"{requestParam.Key}=\"{Uri.EscapeDataString(requestParam.Value)}\"");
-			}
-
-			return string.Join(separator, paramList.ToArray());
+			return new DictionaryToStringJoiner().Join(requestParameters, separator);
 		}
 
 	}
