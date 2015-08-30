@@ -29,8 +29,9 @@ namespace Project.TranslateTwitter.IntegrationDemo
 
 		private static void TestSignInWithTwitter(IAuthenticationContext authenticationContext)
 		{
-			Dictionary<string, string> requestTokens = GetRequestTokens(authenticationContext);
-			string oauthToken = requestTokens["oauth_token"];
+			IAuthenticationContext requestTokens = GetRequestTokens(authenticationContext);
+			string oauthToken = requestTokens.AccessToken;
+			authenticationContext.MergeWith(requestTokens);
 
 			HttpWebRequest authenticationRequest = GetAuthenticationRequest(authenticationContext, oauthToken);
 
@@ -67,19 +68,22 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			return GetWebRequest(authenticationContext, authenticateRequestParameters);
 		}
 
-		private static Dictionary<string, string> GetRequestTokens(IAuthenticationContext authenticationContext)
+		private static IAuthenticationContext GetRequestTokens(IAuthenticationContext authenticationContext)
 		{
 			HttpWebRequest request = GetRequestTokenRequest(authenticationContext);
 			using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
 			using (Stream dataStream = response.GetResponseStream())
+			using (StreamReader reader = new StreamReader(dataStream))
 			{
-				//Open the stream using a StreamReader for easy access.
-				StreamReader reader = new StreamReader(dataStream);
 				//Read the content.
 				string responseFromServer = reader.ReadToEnd();
+				string[] tokens = responseFromServer.Split(new[] { "&" }, StringSplitOptions.RemoveEmptyEntries);
+				Dictionary<string, string> dictionary = tokens.ToDictionary(s => s.Split('=')[0], s => s.Split('=')[1]);
 
-				var tokens = responseFromServer.Split(new[] {"&"}, StringSplitOptions.RemoveEmptyEntries);
-				return tokens.ToDictionary(s => s.Split('=')[0], s => s.Split('=')[1]);
+				var emptyContext = new EmptyAuthenticationContext();
+				emptyContext.MergeWith(dictionary);
+
+				return emptyContext;
 			}
 		}
 
