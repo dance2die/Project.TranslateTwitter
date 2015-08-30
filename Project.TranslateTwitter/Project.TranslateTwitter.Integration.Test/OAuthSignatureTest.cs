@@ -3,25 +3,20 @@ using Xunit;
 
 namespace Project.TranslateTwitter.Integration.Test
 {
-	public class OAuthSignatureTest
+	public class OAuthSignatureTest : IClassFixture<RequestContextFixture>
 	{
-		private readonly IAuthenticationContext _authenticationContext;
-		private readonly RequestParameters _testRequestParameters;
+		private readonly RequestContextFixture _requestContext;
 
-		public OAuthSignatureTest()
+		public OAuthSignatureTest(RequestContextFixture requestContext)
 		{
-			// I need to figure out how to create and use mocking object 
-			// instead of creating a concrete class to pass to c'tor
-			_authenticationContext = new TestAuthenticationContext();
-
-			_testRequestParameters = new TestRequestParameters(_authenticationContext);
+			_requestContext = requestContext;
 		}
 
 		[Fact]
 		public void ValidateDictionaryJoiner()
 		{
 			var sut = new DictionaryToStringJoiner();
-			var joinedString = sut.Join(_testRequestParameters.GetParameters());
+			var joinedString = sut.Join(_requestContext.RequestParameters.GetParameters());
 
 			// From "https://dev.twitter.com/oauth/overview/creating-signatures"
 			const string paramterString =
@@ -33,9 +28,9 @@ namespace Project.TranslateTwitter.Integration.Test
 		[Fact]
 		public void ValidateSignatureBaseString()
 		{
-			var sut = new OAuthSignatureBuilder(_authenticationContext);
+			var sut = new OAuthSignatureBuilder(_requestContext.AuthenticationContext);
 
-			string signatureString = sut.GetSignatureBaseString(_testRequestParameters);
+			string signatureString = sut.GetSignatureBaseString(_requestContext.RequestParameters);
 
 			// From "https://dev.twitter.com/oauth/overview/creating-signatures"
 			const string twitterDocumentationSignatureBaseString =
@@ -53,9 +48,9 @@ namespace Project.TranslateTwitter.Integration.Test
 		public void ValidateOAuthSignature()
 		{
 			// SUT = System Under Test
-			var sut = new OAuthSignatureBuilder(_authenticationContext);
+			var sut = new OAuthSignatureBuilder(_requestContext.AuthenticationContext);
 
-			string oauthSignature = sut.CreateSignature(_testRequestParameters);
+			string oauthSignature = sut.CreateSignature(_requestContext.RequestParameters);
 
 			// Second paramter from Twitter documentation: https://dev.twitter.com/oauth/overview/creating-signatures
 			Assert.Equal(oauthSignature, "tnnArxj06cWHq44gCs1OSKk/jLY=");
@@ -69,8 +64,6 @@ namespace Project.TranslateTwitter.Integration.Test
 		public void ValidateRequestTokenOAuthSignature()
 		{
 			var authenticationContext = new AuthenticationContext();
-			//authenticationContext.AccessToken = null;
-			//authenticationContext.AccessTokenSecret = null;
 
 			// SUT = System Under Test
 			var sut = new OAuthSignatureBuilder(authenticationContext);
@@ -87,6 +80,18 @@ namespace Project.TranslateTwitter.Integration.Test
 
 			// Second paramter from Twitter documentation: https://dev.twitter.com/oauth/overview/creating-signatures
 			Assert.Equal(oauthSignature, "NIkCr9R68INkZ87vt9D3N6Gb8BY=");
+		}
+	}
+
+	public class RequestContextFixture
+	{
+		public IAuthenticationContext AuthenticationContext { get; set; }
+		public RequestParameters RequestParameters { get; set; }
+
+		public RequestContextFixture()
+		{
+			AuthenticationContext = new TestAuthenticationContext();
+			RequestParameters = new TestRequestParameters(AuthenticationContext);
 		}
 	}
 }
