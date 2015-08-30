@@ -1,4 +1,5 @@
-﻿using Project.TranslateTwitter.Security;
+﻿using System.Collections.Generic;
+using Project.TranslateTwitter.Security;
 using Xunit;
 
 namespace Project.TranslateTwitter.Integration.Test
@@ -33,7 +34,16 @@ namespace Project.TranslateTwitter.Integration.Test
 		[Fact]
 		public void TestMergeWithDictionary()
 		{
-			
+			var sut = new EmptyAuthenticationContext();
+			IDictionary<string, string> dictoinary = new Dictionary<string, string>
+			{
+				{ "oauth_token", "oauth_token_value" },
+				{ "oauth_token_secret", "oauth_token_secret_value" }
+			};
+			sut.MergeWith(dictoinary);
+
+			Assert.Equal("oauth_token_value", sut.AccessToken);
+			Assert.Equal("oauth_token_secret_value", sut.AccessTokenSecret);
 		}
 	}
 }
