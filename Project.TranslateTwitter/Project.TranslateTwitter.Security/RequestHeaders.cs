@@ -15,6 +15,11 @@ namespace Project.TranslateTwitter.Security
 			Values = GetCommonHeaders();
 		}
 
+		public void Add(string key, string value)
+		{
+			Values[key] = value;
+		}
+
 		public void AddOAuthSignature(string signature)
 		{
 			Values.Add("oauth_signature", signature);
