@@ -69,14 +69,13 @@ namespace Project.TranslateTwitter.Integration.Test
 		public void ValidateRequestTokenOAuthSignature()
 		{
 			var authenticationContext = new AuthenticationContext();
-			authenticationContext.AccessToken = null;
-			authenticationContext.AccessTokenSecret = null;
+			//authenticationContext.AccessToken = null;
+			//authenticationContext.AccessTokenSecret = null;
 
 			// SUT = System Under Test
 			var sut = new OAuthSignatureBuilder(authenticationContext);
 
 			RequestParameters requestParameters = new RequestTokenRequestParameters(authenticationContext, "oob");
-			requestParameters.Headers.Add("oauth_callback", "oob");
 			requestParameters.OAuthNonce = "e0d92fb7d5264baf85321de413176e9d";
 			requestParameters.OAuthTimestamp = "1440899892";
 

@@ -41,7 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticateRequestParameter.cs" />
+    <Compile Include="AccessTokenRequestParameters.cs" />
+    <Compile Include="AuthenticateRequestParameters.cs" />
     <Compile Include="AuthenticationContext.cs" />
     <Compile Include="DictionaryMerger.cs" />
     <Compile Include="DictionaryToStringJoiner.cs" />

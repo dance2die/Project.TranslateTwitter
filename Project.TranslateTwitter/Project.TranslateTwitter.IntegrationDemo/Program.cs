@@ -6,9 +6,6 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Mime;
-using System.Threading;
-using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Project.TranslateTwitter.Security;
@@ -35,55 +32,38 @@ namespace Project.TranslateTwitter.IntegrationDemo
 			Dictionary<string, string> requestTokens = GetRequestTokens(authenticationContext);
 			string oauthToken = requestTokens["oauth_token"];
 
-			HttpWebRequest request = GetAuthenticationRequest(authenticationContext, oauthToken);
+			HttpWebRequest authenticationRequest = GetAuthenticationRequest(authenticationContext, oauthToken);
 
-			//RunBrowserThread(request.RequestUri);
-			var process = Process.Start(request.RequestUri.ToString());
-			//process.OutputDataReceived += Process_OutputDataReceived;
+			// Copied from "https://github.com/djmc/SimpleOAuth.Net/blob/master/SimpleOAuthTester/Program.cs"
+			Process.Start(authenticationRequest.RequestUri.ToString());
 
-			//using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
-			//using (Stream responseStream = response.GetResponseStream())
-			//using (StreamReader streamReader = new StreamReader(responseStream))
-			//{
-			//	string responseFromServer = streamReader.ReadToEnd();
-			//	Console.WriteLine(responseFromServer);
-			//}
-		}
+			Console.Out.WriteLine("Web browser is starting. When you have logged in, enter your Verifier code...");
+			Console.Out.Write("Verifier> ");
+			string oauthVerifier = Console.In.ReadLine();
 
-		private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-		{
-			Console.WriteLine(e.Data);
-		}
-
-		/// <remarks>http://stackoverflow.com/a/4271581/4035</remarks>
-		private static void RunBrowserThread(Uri url)
-		{
-			var th = new Thread(() => {
-				var br = new WebBrowser();
-				br.DocumentCompleted += browser_DocumentCompleted;
-				br.Navigate(url);
-				Application.Run();
-			});
-			th.SetApartmentState(ApartmentState.STA);
-			th.Start();
-		}
-
-		/// <remarks>http://stackoverflow.com/a/4271581/4035</remarks>
-		private static void browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-		{
-			var br = sender as WebBrowser;
-			if (br.Url == e.Url)
+			HttpWebRequest accessTokenRequest = GetAccessTokenRequest(authenticationContext, oauthVerifier);
+			using (HttpWebResponse response = accessTokenRequest.GetResponse() as HttpWebResponse)
+			using (Stream dataStream = response.GetResponseStream())
+			using (StreamReader reader = new StreamReader(dataStream))
 			{
-				Console.WriteLine("Natigated to {0}", e.Url);
-				Application.ExitThread();   // Stops the thread
+				//Read the content.
+				string responseFromServer = reader.ReadToEnd();
 			}
+
+		}
+
+		private static HttpWebRequest GetAccessTokenRequest(IAuthenticationContext authenticationContext, string oauthVerifier)
+		{
+			RequestParameters accessTokenRequestParameters =
+				new AccessTokenRequestParameters(authenticationContext, oauthVerifier);
+			return GetWebRequest(authenticationContext, accessTokenRequestParameters);
 		}
 
 		private static HttpWebRequest GetAuthenticationRequest(
 			IAuthenticationContext authenticationContext, string oauthToken)
 		{
 			RequestParameters authenticateRequestParameters = 
-				new AuthenticateRequestParameter(authenticationContext, oauthToken);
+				new AuthenticateRequestParameters(authenticationContext, oauthToken);
 			return GetWebRequest(authenticationContext, authenticateRequestParameters);
 		}
 

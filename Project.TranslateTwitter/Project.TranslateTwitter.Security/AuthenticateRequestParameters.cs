@@ -20,7 +20,11 @@ namespace Project.TranslateTwitter.Security
 		public string OAuthToken
 		{
 			get { return QueryProperties[OAUTH_TOKEN_QUERYNAME]; }
-			set { QueryProperties[OAUTH_TOKEN_QUERYNAME] = value; }
+			set
+			{
+				QueryProperties[OAUTH_TOKEN_QUERYNAME] = value;
+				Headers.Values[OAUTH_TOKEN_QUERYNAME] = value;
+			}
 		}
 
 		public AuthenticateRequestParameters(IAuthenticationContext authenticationContext, string oauthToken)

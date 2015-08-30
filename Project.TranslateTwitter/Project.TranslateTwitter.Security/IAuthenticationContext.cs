@@ -4,7 +4,7 @@ namespace Project.TranslateTwitter.Security
 	{
 		string ConsumerKey { get; }
 		string ConsumerKeySecret { get; }
-		string AccessToken { get; }
-		string AccessTokenSecret { get; }
+		string AccessToken { get; set; }
+		string AccessTokenSecret { get; set; }
 	}
 }
