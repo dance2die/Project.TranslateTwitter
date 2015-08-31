@@ -82,16 +82,4 @@ namespace Project.TranslateTwitter.Integration.Test
 			Assert.Equal(oauthSignature, "NIkCr9R68INkZ87vt9D3N6Gb8BY=");
 		}
 	}
-
-	public class RequestContextFixture
-	{
-		public IAuthenticationContext AuthenticationContext { get; set; }
-		public RequestParameters RequestParameters { get; set; }
-
-		public RequestContextFixture()
-		{
-			AuthenticationContext = new TestAuthenticationContext();
-			RequestParameters = new TestRequestParameters(AuthenticationContext);
-		}
-	}
 }
